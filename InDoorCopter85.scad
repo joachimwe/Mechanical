@@ -109,6 +109,10 @@ module torus()
 
 module STUFF(exp=false)
 {
+    color("aqua")
+    union()
+    
+    {
     translate(campos) rotate([-90+30,0,0]) CAMERA(exp);
 
     dwn = height - 14;
@@ -133,11 +137,9 @@ module STUFF(exp=false)
     
      if(drawstuff)
      {   
-        translate([dxy,dxy,0]) translate([0,0,-height+thick*2]) rotate([0,0,0]) motor1103(exp);
-        translate([-dxy,dxy,0]) translate([0,0,-height+thick*2]) rotate([0,0,0]) motor1103(exp);
-        translate([dxy,-dxy,0]) translate([0,0,-height+thick*2]) rotate([0,0,0]) motor1103(exp);
-        translate([-dxy,-dxy,0]) translate([0,0,-height+thick*2]) rotate([0,0,0]) motor1103(exp);
+        copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height+thick*2]) motor1103(exp);
      } 
+ }
 }
 
 //cylinder(d=95,h=10);
@@ -146,74 +148,38 @@ hcap = 8;
 
 module InnerCenter()
 {
-    !difference()
+    difference()
     {
         union()
         {
-            translate([0,0,-height/2]) cube([dx+10,dy,height],center=true); // floor
-            translate([dx/2+3,0,-height/2]) cube([5,8,height],center=true); // right
-            translate([-dx/2-3,0,-height/2]) cube([5,8,height],center=true); // left
+            //height+trad+thick;
+            cbx= dx+8;
+            cby= dy+11;
+            translate([-cbx/2,-cby/2,-height]) cube([cbx,cby,height+trad],center=false); // floor
             
-            translate([0,dy/2+15,-height/2]) cube([15,30,height],center=true); // front end
-            translate([0,-dy/2-6,-height/2]) cube([12,12,height],center=true); // back end
-            
-            translate([0,0,hcap/2-thick]) rotate([0,0,0]) cylinder(d2=53-thick*2,d1=70,h=hcap-thick,center=true,$fn=4); // top
-                
-      
-            //translate([0,-52,6.5]) rotate([30,0,0]) translate([0,0,-10]) cylinder(d=6,h=10); // antenna supp
-            //translate([0,-50,0]) rotate([0,0,0]) translate([0,0,0]) cylinder(d=7,h=8,center=true); // TX cap supp
-            //translate([0,dxy+5,2]) rotate([90,0,0]) translate([0,0,0]) cylinder(d=8,h=24,center=true);  // front
-
-            //translate([0,-dxy-4.5,2+0.5]) rotate([90,0,0]) translate([0,0,-2]) cylinder(d=9,h=20,center=true); //back
-            
-            //translate([dxy,0,0]) rotate([0,90,0]) translate([0,0,0]) cylinder(d=8,h=10,center=true); 
-            //translate([-dxy,0,0]) rotate([0,90,0]) translate([0,0,0]) cylinder(d=8,h=10,center=true); 
+            translate([0,0,(hcap-thick)/2+trad]) rotate([0,0,0]) cylinder(d2=53-thick*2,d1=71,h=hcap-thick,center=true,$fn=4); // top
         }
-        
          // clear out prop range
          translate([0,0,-height-1]) 
-         copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,0]) cylinder(r=radius+thick,h=30);
-    
-        
-      
+         copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,0]) cylinder(r=radius+thick+0.25,h=30); // had to add some radius...
     }
 }
 
 module CapRemover()
 {
-    translate([0,0,25+2+1]) rotate([0,0,0]) cube(50,center=true); // main cap
-    translate([0,25,5+3]) rotate([0,0,0]) cube([6,40,10],center=true); // front mini extension
+    translate([0,0,25+2]) rotate([0,0,0]) cube(50,center=true); // main cap
+    intersection()
+    {
+        translate([0,0,-2]) InnerCenter();
+        translate([0,0,25+1]) rotate([0,0,0]) cube(50,center=true); // main cap
+    }
+    //translate([0,25,5+3]) rotate([0,0,0]) cube([6,40,10],center=true); // front mini extension
     
     translate(campos) rotate([30,0,0]) translate([0,0,7.5]) cube([12.5,18,15],center=true); // cam cap
     
-    translate([0,-25,5+3]) rotate([0,0,0]) cube([6,40,10],center=true); // back mini extension
+    //translate([0,-25,5+3]) rotate([0,0,0]) cube([6,40,10],center=true); // back mini extension
 }
 
-module body_old()
-{
-    difference()
-    {
-        union()
-        {
-            translate([dxy,dxy,0]) completeRing(ang,0);
-            translate([-dxy,dxy,0]) completeRing(-ang,0);
-            translate([dxy,-dxy,0]) completeRing(-ang,180);
-            translate([-dxy,-dxy,0]) completeRing(ang,180);
-            
-            Center();
-            
-            translate(campos) rotate([-90+30,0,0]) cylinder(h=7.5,d=13);// reinforce cam cylinder
-            translate(campos) translate([0,-5,1]) rotate([0,0,0]) cylinder(h=5,d=15);// reinforce cam
-            
-            
-        }
-        STUFF(true);    
-        
-        Cabling();
-    }
-    
-    
-}
 
 module body()
 {
@@ -225,24 +191,38 @@ module body()
              minkowski()
             {
                 InnerCenter();
-                cube(thick);
-                }
+                cube(thick*2,center=true);
+                //cylinder(d=thick*2,h= thick*2,center=true);
+             }
             
         }
         InnerCenter();
         STUFF(true);    
         
-        //Cabling();
+        Cabling();
     }
-    
+}
+
+module body2()
+{
+       copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,0]) completeRing(ang,0);
+        InnerCenter();
+        STUFF(true);    
+        
+        Cabling();
     
 }
 
 
 module Cabling()
 {
-    translate([dxy,0,-height+4]) rotate([90,0,0]) cylinder(d=4,h=dxy*2-30,center=true);
-    translate([-dxy,0,-height+4]) rotate([90,0,0]) cylinder(d=4,h=dxy*2-30,center=true);
+    color("salmon")
+    union()
+    
+    {
+    
+    translate([dx/2,0,-height+4]) rotate([90,0,0]) cylinder(d=4,h=dy-30,center=true);
+    translate([-dx/2,0,-height+4]) rotate([90,0,0]) cylinder(d=4,h=dy-30,center=true);
     translate([0,1,-height+3]) rotate([90,0,0]) translate([0,0,-1]) cylinder(d=5,h=43); // back
     translate([0,0,-height+2]) rotate([-90+10,0,0]) translate([0,0,-1]) cylinder(d=5,h=50); // front
     
@@ -252,6 +232,8 @@ module Cabling()
     //translate([0,-50,6.5]) rotate([30,0,0]) cylinder(d=32,h=17); // antenna
     //translate([0,-50,6.5]) rotate([30,0,0]) translate([0,0,-10]) cylinder(d=4,h=12); // antenna wire
     //translate([0,-50,6.5-4]) rotate([60,0,0]) translate([0,0,-15]) cylinder(d=4,h=12); // antenna wire
+        
+    }
 }
 
 if(drawstuff)
@@ -265,7 +247,7 @@ Cabling();
 //
 
 //color("lightgreen",0.3) translate([0,0,-height-15/2]) rotate([0,0,0]) cube([16,40,15],center=true);
-/*
+
 difference()
 {
     body();
@@ -280,9 +262,5 @@ intersection()
     CapRemover();
 }
 
-*/
-
-body();
-//STUFF(true);
 
 
