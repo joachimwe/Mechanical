@@ -11,7 +11,7 @@ $fn = 60;
 radius = 25.7+0.25; // propeller radius
 thick = 0.8; // rest body thickness
 fthick = 0.8; // fin thickness
-trad = 3; // intake aerodynamic radius
+trad = 3.5; // intake aerodynamic radius
 height = 18-4; //height of tunnel
 //dxy = 60/2;
 dx=63;
@@ -19,12 +19,12 @@ dy=60;
 
 star = true; // star - stack config
 
-campos=[0,55,-2];
+campos=[0,52,0];
 
 ang = 25; // fin angle
 dlt=2.5; // fin height
 
-drawstuff=false;
+drawstuff=true;
 
 use <libCopterParts.scad>;
 
@@ -109,10 +109,6 @@ module torus()
 
 module STUFF(exp=false)
 {
-    color("aqua")
-    union()
-    
-    {
     translate(campos) rotate([-90+30,0,0]) CAMERA(exp);
 
     dwn = height - 14;
@@ -137,9 +133,8 @@ module STUFF(exp=false)
     
      if(drawstuff)
      {   
-        copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height+thick*2]) motor1103(exp);
+        //copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height+thick*2]) rotate([0,0,-90]) motor1103(exp);
      } 
- }
 }
 
 //cylinder(d=95,h=10);
@@ -154,7 +149,7 @@ module InnerCenter()
         {
             //height+trad+thick;
             cbx= dx+8;
-            cby= dy+11;
+            cby= dy+11+15;
             translate([-cbx/2,-cby/2,-height]) cube([cbx,cby,height+trad],center=false); // floor
             
             translate([0,0,(hcap-thick)/2+trad]) rotate([0,0,0]) cylinder(d2=53-thick*2,d1=71,h=hcap-thick,center=true,$fn=4); // top
@@ -183,11 +178,14 @@ module CapRemover()
 
 module body()
 {
+    copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,0]) completeRing(ang,0);
+    
+    
     difference()
     {
         union()
         {
-             copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,0]) completeRing(ang,0);
+             
              minkowski()
             {
                 InnerCenter();
@@ -236,17 +234,9 @@ module Cabling()
     }
 }
 
-if(drawstuff)
-{
-union()
-{
-STUFF(true);
-Cabling();
-}
-}
-//
 
-//color("lightgreen",0.3) translate([0,0,-height-15/2]) rotate([0,0,0]) cube([16,40,15],center=true);
+
+color("lightgreen",0.3) translate([0,0,-height-15/2]) rotate([0,0,0]) cube([16,40,15],center=true); // battery
 
 difference()
 {
