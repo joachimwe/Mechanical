@@ -1,3 +1,5 @@
+
+
 /*
 Copter parts library
 
@@ -38,11 +40,11 @@ translate([260,40,0]) motor1807(true);
 
 module ESC16x16(clr=false) 
 {
-    l = 16;
+    l = 15;
     PCB_x = 22.8;	
-    PCB_y = 20.4;
+    PCB_y = 20.45;
     PCB_r = 3.5;
-	h=1.2; // PCB thickness
+	hp=1.0; // PCB thickness
 	
     difference()
     {
@@ -55,7 +57,7 @@ module ESC16x16(clr=false)
 			         [ -(PCB_x-PCB_r)/2,  (PCB_y-PCB_r)/2, 0],
 			         [ -(PCB_x-PCB_r)/2,  -(PCB_y-PCB_r)/2, 0] ])
 			{
-				translate (i) cylinder(h,r=PCB_r/2);
+				translate (i) cylinder(h=hp,r=PCB_r/2,$fn = 12);
 			}
 		}
 
@@ -65,21 +67,24 @@ module ESC16x16(clr=false)
 		         [-l/2,  l/2, 0],
 		         [-l/2,  -l/2, 0] ])
 		{   
-			translate (i) cylinder(h,d=2.2);
+			translate (i) cylinder(h=hp,d=2.15,$fn = 12);
 		}
 	}
-	
-	color("grey") translate([0,0,h/2-0.4]) cube([20,11,4.0],true); // inner block
-	color("grey") translate([0,0,h/2-0.4]) cube([12,20,3.0],true); // inner block
+	ttop=1.6;
+	color("grey") translate([0,0,ttop/2+hp]) cube([19.8,10.7,ttop],true); // upper alongside block
+	color("grey") translate([0,0,ttop/2+hp]) cube([6,17.8,ttop],true); // upper across block	
+    tlow=0.6;
+    color("grey") translate([0,0,-tlow/2]) cube([23,12,tlow],true); // lower alongside block
+	color("grey") translate([0,0,-tlow/2]) cube([9.5,20,tlow],true); // lower across block
+
+
     if(clr)
     {
-        color("red") translate([-12,0,h/2-0.4]) cube([10,12,4.6],true); // connector space 
-        color("red") translate([12,0,h/2-0.4]) cube([10,12,4.6],true); // connector space
-        color("red") translate([0,0,h/2-0.4]) cube([20,12,5.5],true); // inner block
-        color("red") translate([0,0,h/2-0.4]) cube([14,20,4.5],true); // inner block
+        color("red") translate([-11,0,-0.5]) cube([8,12,1],true); // upper connector space 
+        color("red") translate([11,0,-0.5]) cube([8,12,1],true); // connector space
         for(i = [ [  l/2,   l/2,  0], [ l/2, -l/2, 0], [-l/2,  l/2, 0], [-l/2,  -l/2, 0] ])
         {   
-			color("red") translate (i) cylinder(h=1.6,d=4);
+			//color("red") translate (i) cylinder(h=1.6,d=4);
 		} 
     }
 
@@ -106,32 +111,31 @@ module REVO16x16(clr=false)
 			         [ -(PCB_x-PCB_r)/2,  (PCB_y-PCB_r)/2, 0],
 			         [ -(PCB_x-PCB_r)/2,  -(PCB_y-PCB_r)/2, 0] ])
 			{
-				translate (i) cylinder(h,r=PCB_r/2);
+				translate (i) cylinder(h,r=PCB_r/2,$fn = 12);
 			}
 		}
 
 		for(i = [ [  l/2,   l/2,  0], [ l/2, -l/2, 0], [-l/2,  l/2, 0], [-l/2,  -l/2, 0] ])
 		{   
-			translate (i) cylinder(h,d=2.2);
+			translate (i) cylinder(h,d=2.2,$fn = 12);
 		}
 	}
 	
-	color("grey") translate([0,0,h/2]) cube([13.5,19,4.5],true); // inner block
-	color("grey") translate([0,0,h/2]) cube([19,13.5,4.5],true); // inner block
+	color("grey") translate([0,0,h/2]) cube([12.8,19,4.2],true); // inner block
+	color("grey") translate([0,0,h/2]) cube([19,12.8,4.2],true); // inner block
 	color("grey") translate([8.0,0,(2.7/2)+h]) cube([6,7.8,2.9],true); // USB
-    color("lightgrey") translate([0,8,(2.7/2)+h]) cube([8.5,6,4.0],true); // ESC conn
-    //cube([20.3,20.3,thick],true);
+    //color("lightgrey") translate([0,8,(2.7/2)+h]) cube([8.5,6,4.0],true); // ESC conn
     
     if(clr)
     {
-        color("red") translate([12.0,0,(2.7/2)+h]) cube([6,7.8,2.9],true); // USB connector
-        color("red") translate([0,13,(2.7/2)+h]) cube([8.5,4,3.5],true); // ESC conn 
-        color("red") translate([0,0,h/2]) cube([13.5,19,6],true); // inner block
-        color("red") translate([0,0,h/2]) cube([19,13.5,6],true); // inner block
-
+        color("red") translate([14.0,0,(2.7/2)+h]) cube([6,7.8,2.9],true); // USB connector
+        color("red") translate([-9,0,0.75+h]) cube([3,13,2],true); // upper connector space 
+        color("red") translate([0,-9,0.75+h]) cube([13,3,2],true); // connector space
+       // color("red") translate([0,13,(2.7/2)+h]) cube([8.5,4,3.5],true); // ESC conn 
+    
         for(i = [ [  l/2,   l/2,  0], [ l/2, -l/2, 0], [-l/2,  l/2, 0], [-l/2,  -l/2, 0] ])
         {   
-			color("red") translate (i) cylinder(h=1.6,d=4);
+			//color("red") translate (i) cylinder(h=1.6,d=4);
 		}
     }
     
@@ -289,9 +293,10 @@ module RX_XM(clr=false)
 {
 	
     color("grey") cube([10.3,16.9,3.5],true);
+    color("grey") translate([0,-5,-1]) rotate([90,0,0]) cylinder(h=15,d=1.5);
 	color("red") if(clr)
     {
-			translate([0,-5,-1]) rotate([90,0,0]) cylinder(h=15,d=1.5);
+			
 	}
 }
 
@@ -386,7 +391,7 @@ module motor1103(ext=false)
     color("grey",1.0) translate([0,0,2.5]) cylinder(d=15.0,h=5); //bell
     }
     
-    color("lime",0.3) translate([0,0,3+4.5]) cylinder(r=25.7,h=4.5); //prop
+    color("lime",0.3) translate([0,0,3+4.5]) cylinder(d=1.8*25.4+0.25,h=4.5); //prop
 }
 
 module motor1807(ext=false)

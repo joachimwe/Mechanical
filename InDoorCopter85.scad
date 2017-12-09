@@ -8,18 +8,19 @@ https://github.com/fabianhu/
 */ 
 
 $fn = 60;
-radius = 25.7+0.25; // propeller radius
-thick = 0.8; // rest body thickness
-fthick = 0.8; // fin thickness
-trad = 3.5; // intake aerodynamic radius
-height = 18-4; //height of tunnel
-//dxy = 60/2;
-dx=63;
-dy=60;
+radius = 2 * (25.4/2)+0.5; // propeller radius
+echo("Prop radius: ",radius);
+thick = 0.7; // rest body thickness
+fthick = 0.7; // fin thickness
+trad = 3.0; // intake aerodynamic radius
+height = 16; //height of tunnel
 
-star = true; // star - stack config
+dx=radius*2+2*thick+13;
+dy=radius*2+2*trad-2*thick+0.3;
 
-campos=[0,52,0];
+
+
+campos=[0,42,-5.3];
 
 ang = 25; // fin angle
 dlt=2.5; // fin height
@@ -34,20 +35,6 @@ module copy_mirror(vec=[0,1,0])
     children();
     mirror(vec) children();
 }
-
-module thinwall_out(n=2)
-{
-    difference()
-    {
-        minkowski()
-        {
-            children();
-            sphere(n);
-        }
-        children();
-    }
-}
-
 
 
 module completeRing(rot=0,zer=17){
@@ -67,6 +54,7 @@ rdiv =5;
                     cylinder(r=radius+thick,h=height);  // upper frame // 1=unten
                 }
                 translate([0,0,-1]) cylinder(r=radius,h=height+2);
+                translate([0,-radius,4]) rotate([90,0,0]) cylinder(d=4,h=3,center=true); // cable bore
             }
 
             translate([0,0,-height+cos(ang)*dlt+thick/2]) 
@@ -80,13 +68,23 @@ rdiv =5;
         }
         translate([0,0,-height+thick]) rotate([0,0,zer-90]) motor1103(true);
         
+       /* for(i=[0:360/rdiv:359])
+        {
+            rotate([0,0,i+360/rdiv/2-8]) translate([radius,0,-height-10]) rotate([0,90,0]) cylinder(d=32,h=8,center=true);
+        }*/
+        
+        // motor holder cutout
+        for(i=[0:360/rdiv:359])
+        {
+            rotate([0,0,i+360/rdiv/2+5]) translate([6,0,-height+6]) rotate([0,90,0]) cylinder(d=7.5,h=5,center=true);
+        }
         
     }
     //translate([0,0,-height+thick*2]) rotate([0,0,zer-90]) motor1103(true);
 }
 
-module Fin()
-{
+
+module Fin(){
     hull()    
     {
         translate([dlt,0,0]) cylinder(d=fthick,h=radius);
@@ -94,8 +92,7 @@ module Fin()
     }
 } 
 
-module torus()
-{
+module torus(){
     rotate_extrude(convexity = 5 )
     translate([radius+trad, 0, 0])
     difference()
@@ -107,18 +104,20 @@ module torus()
     }
 }
 
+FCpos= [-3,13+6,-3.2-height + 14];
+
 module STUFF(exp=false)
 {
     translate(campos) rotate([-90+30,0,0]) CAMERA(exp);
 
     dwn = height - 14;
         
-    if(star) // star - stack config
+    if(true) // star - stack config
     {
-        translate([-16,0,-3.5-dwn]) rotate([90,0,0]) ESC16x16(exp);
-        translate([16,0,-3.5-dwn]) rotate([90,0,180]) ESC16x16(exp);
-        translate([-1,13,-3.5-dwn]) rotate([0,-90,180]) REVO16x16(exp);
-        translate([0,-10,-5-dwn]) rotate([-90,0,90]) RX_XM(exp);
+        //translate([-16,0,-3.5-dwn]) rotate([90,0,0]) ESC16x16(exp);
+        copy_mirror([1,0,0]) translate([15,-0.5+3,-3.5-dwn]) rotate([90,0,180-17]) ESC16x16(exp);
+        translate(FCpos) rotate([0,-90,180]) REVO16x16(exp);
+        translate([-10,11,-5-dwn]) rotate([90,0,90-35]) RX_XM(exp);
     }
     else
     {
@@ -127,130 +126,108 @@ module STUFF(exp=false)
         translate([0,0,-2-dwn])  rotate([0,0,180]) REVO16x16(exp);
         translate([0,0,2.5-dwn]) rotate([0,0,0]) RX_XM(exp); 
     }
-    translate([0,-30,-4]) rotate([-90,-90,90]) TX_MM213TL(exp);
+    translate([3,15+5,-4]) rotate([-90,-90,90]) TX_MM213TL(exp);
 
-   
     
      if(drawstuff)
      {   
-        //copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height+thick*2]) rotate([0,0,-90]) motor1103(exp);
+        copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height+thick*2]) rotate([0,0,-90]) motor1103(exp);
      } 
 }
 
-//cylinder(d=95,h=10);
-
-hcap = 8;
-
-module InnerCenter()
+module BattHld()
 {
+    bs=[13,42,17.5];
     difference()
     {
-        union()
-        {
-            //height+trad+thick;
-            cbx= dx+8;
-            cby= dy+11+15;
-            translate([-cbx/2,-cby/2,-height]) cube([cbx,cby,height+trad],center=false); // floor
-            
-            translate([0,0,(hcap-thick)/2+trad]) rotate([0,0,0]) cylinder(d2=53-thick*2,d1=71,h=hcap-thick,center=true,$fn=4); // top
+        minkowski(){
+            cube(bs,center=true);
+            cube(thick*2,center=true);
         }
-         // clear out prop range
-         translate([0,0,-height-1]) 
-         copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,0]) cylinder(r=radius+thick+0.25,h=30); // had to add some radius...
-    }
-}
+        cube(bs,center=true);
+        translate([0,-22,0]) cube([15,2,19],center=true); // minus end
+        
+        translate([0,15,0])cylinder(d=10,h=20,center=true);        
+        translate([0,1,0])cylinder(d=10,h=20,center=true);
+        translate([0,-13,0])cylinder(d=10,h=20,center=true);
 
-module CapRemover()
-{
-    translate([0,0,25+2]) rotate([0,0,0]) cube(50,center=true); // main cap
-    intersection()
-    {
-        translate([0,0,-2]) InnerCenter();
-        translate([0,0,25+1]) rotate([0,0,0]) cube(50,center=true); // main cap
+        
+        translate([0,15,0]) rotate ([90,0,0]) cylinder(d=11,h=20,center=true);
+        
+        //translate([0,-12,0])rotate ([90,0,90])cylinder(d=15,h=20,center=true);
+        translate([0,12,0])rotate ([90,0,90])cylinder(d=13,h=20,center=true);
     }
-    //translate([0,25,5+3]) rotate([0,0,0]) cube([6,40,10],center=true); // front mini extension
     
-    translate(campos) rotate([30,0,0]) translate([0,0,7.5]) cube([12.5,18,15],center=true); // cam cap
-    
-    //translate([0,-25,5+3]) rotate([0,0,0]) cube([6,40,10],center=true); // back mini extension
 }
-
 
 module body()
 {
+    // 4 fans
     copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,0]) completeRing(ang,0);
     
+    // side support
+    copy_mirror([1,0,0]) translate([dx/1.8,0,-height/2]) 
+    union(){
+        cube([thick,trad*1.8,height],center=true);
+        translate([0,0,height/2])rotate([0,90,0]) cylinder(d=trad*1.8,h=thick,center=true);
+    }
     
+    // front support
+    //translate([0,dy/1.75,-height/2]) cube([trad*1.65+10,thick,height],center=true);
+    
+    translate([0,-18,-6.8+0.25])BattHld();
+
+    // floor
     difference()
     {
-        union()
-        {
-             
-             minkowski()
-            {
-                InnerCenter();
-                cube(thick*2,center=true);
-                //cylinder(d=thick*2,h= thick*2,center=true);
-             }
-            
-        }
-        InnerCenter();
-        STUFF(true);    
-        
-        Cabling();
+            translate([0,16,-height+thick/2-0.1]) cube([dx+8,dy-18,0.5],center=true);
+            copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height-1])   cylinder(r=radius,h=2);
+            translate([0,19,-height]) cylinder(h=2,d=13,center=true);
+            translate([10,5,-height]) cylinder(h=2,d=11,center=true);
+            translate([-10,5,-height]) cylinder(h=2,d=11,center=true);
     }
-}
-
-module body2()
-{
-       copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,0]) completeRing(ang,0);
-        InnerCenter();
-        STUFF(true);    
-        
-        Cabling();
     
-}
-
-
-module Cabling()
-{
-    color("salmon")
-    union()
+    // FC holder
     
+    translate(FCpos)
+    difference()
     {
-    
-    translate([dx/2,0,-height+4]) rotate([90,0,0]) cylinder(d=4,h=dy-30,center=true);
-    translate([-dx/2,0,-height+4]) rotate([90,0,0]) cylinder(d=4,h=dy-30,center=true);
-    translate([0,1,-height+3]) rotate([90,0,0]) translate([0,0,-1]) cylinder(d=5,h=43); // back
-    translate([0,0,-height+2]) rotate([-90+10,0,0]) translate([0,0,-1]) cylinder(d=5,h=50); // front
-    
-    translate([0,35,-5]) rotate([0,0,0]) translate([0,0,0]) cube([4,25,height],true); // front
-    
-    
-    //translate([0,-50,6.5]) rotate([30,0,0]) cylinder(d=32,h=17); // antenna
-    //translate([0,-50,6.5]) rotate([30,0,0]) translate([0,0,-10]) cylinder(d=4,h=12); // antenna wire
-    //translate([0,-50,6.5-4]) rotate([60,0,0]) translate([0,0,-15]) cylinder(d=4,h=12); // antenna wire
+    union()
+    {
+        translate([0.5,9,-8.5]) cube([4,4,4],true);
+        translate([0.5,-9,-8.5]) cube([4,4,4],true);
+        
+        translate([-1,10.25,6]) rotate ([0,0,0]) cube([4,7,6],true);
         
     }
-}
-
-
-
-color("lightgreen",0.3) translate([0,0,-height-15/2]) rotate([0,0,0]) cube([16,40,15],center=true); // battery
-
-difference()
-{
-    body();
-    CapRemover();
-}
+         translate([-1+2,10.25,7-2]) rotate ([0,45,0]) cube([4,7,10],true); 
+            rotate([0,-90,180]) REVO16x16(true);
+         translate([0.5,0,-8.5]) cube([1.2,20.6,4],true);
+    }
     
-translate([100,0,5])
-rotate([180,0,0])
-intersection()
-{
-    body();
-    CapRemover();
+    // cam holder
+    translate(campos) rotate([-90+30,0,0]) 
+    difference()
+    {
+       union()
+       {
+           translate([0,0,-5]) cube([15.2,14,4],true);
+           translate([0,2,-8]) rotate([0,90,0]) cylinder(d=10,h=14.5,center=true);
+           
+       }
+       CAMERA(true);
+       
+    }
+    
+    
+    //STUFF(false);    
+
 }
 
+
+
+
+body();
+    
 
 
