@@ -68,16 +68,16 @@ rdiv =5;
         }
         translate([0,0,-height+thick]) rotate([0,0,zer-90]) motor1103(true);
         
-        for(i=[0:360/rdiv:180])
+        /*for(i=[0:360/rdiv:180])
         {
             rotate([0,0,i-45]) translate([radius,0,-height-10]) rotate([0,90,0]) cylinder(d=32,h=8,center=true);
-        }
+        }*/
         
         // motor holder cutout
-        for(i=[0:360/rdiv:359])
+        /*for(i=[0:360/rdiv:359])
         {
             rotate([0,0,i+360/rdiv/2+5]) translate([6,0,-height+6]) rotate([0,90,0]) cylinder(d=7.5,h=5,center=true);
-        }
+        }*/
         
     }
     //translate([0,0,-height+thick*2]) rotate([0,0,zer-90]) motor1103(true);
@@ -154,10 +154,14 @@ module BattHld()
         cube(BattSize,center=true);
         translate([0,-22,0]) cube([15,2,19],center=true); // minus end
         
-        translate([0,15,0])cylinder(d=10,h=20,center=true);        
+        /*translate([0,15,0]) rotate([0,0,45]) cylinder(d=14,h=20,center=true,$fn=4);        
+        translate([0,1,0]) rotate([0,0,45]) cylinder(d=14,h=20,center=true,$fn=4);
+        translate([0,-13,0]) rotate([0,0,45]) cylinder(d=14,h=20,center=true,$fn=4);
+        */
+        translate([0,15,0]) cylinder(d=10,h=20,center=true);        
         translate([0,1,0])cylinder(d=10,h=20,center=true);
         translate([0,-13,0])cylinder(d=10,h=20,center=true);
-
+        
         
         translate([0,15,0]) rotate ([90,0,0]) cylinder(d=11,h=20,center=true);
         
@@ -196,10 +200,12 @@ module body()
     // floor
     difference()
     {
-            translate([0,16,-height+thick/2-0.1]) cube([dx+8,dy-18,thick],center=true);
+            translate([0,16,-height+thick/2]) cube([dx+8,dy-18,thick],center=true);
             copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height-1])   cylinder(r=radius,h=2); // clean out main bores
-            translate([0,19,-height]) cylinder(h=2,d=13,center=true);
+            translate([0,19,-height]) cylinder(h=2,d=14,center=true); // front center
             copy_mirror([1,0,0]) translate([11,6,-height]) cylinder(h=2,d=10,center=true);
+        
+         translate([0,-4,-height]) cylinder(d=10,h=20,center=true);
             
     }
     
@@ -210,7 +216,7 @@ module body()
     {
     union()
     {
-        #translate([0.5-2.5/2,9,-8.5]) cube([6.5,4,4],true);
+        translate([0.5-2.5/2,9,-8.5]) cube([6.5,4,4],true);
         translate([0.5,-9,-8.5]) cube([4,4,4],true);
         
         translate([-1.5,10.25,6-1]) rotate ([0,0,0]) cube([5,7,8],true);
@@ -232,8 +238,8 @@ module body()
     {
        union()
        {
-           translate([0,0,-5]) cube([15.2,14.5,4],true);
-           translate([0,2,-8]) rotate([0,90,0]) cylinder(d=10,h=14.5,center=true);
+           translate([0,1,-5]) cube([15.2,14.0,4],true);
+           translate([0,2.65,-7]) rotate([0,90,0]) cylinder(d=10,h=14.5,center=true);
            
        }
        CAMERA(true);
