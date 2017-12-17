@@ -97,12 +97,12 @@ module torus(){
     translate([radius+trad, 0, 0])
     union()
     {
-        translate([-thick*1.5,trad-thick/2-0.2]) circle(d=thick);
+        translate([-thick*1.8,trad-thick/2-0.15]) circle(d=thick+0.3);
     difference()
     {
         circle(r = trad);
         translate([0,0]) circle(r = trad-thick);
-        translate([-0.5-0.5,0]) square([5,5]);
+        translate([-0.5-0.5,-0.5]) square([5,5]);
         
         translate([-5,-10]) square([10,10]);
     }
@@ -142,17 +142,28 @@ module STUFF(exp=false)
 
 BattSize=[13,42,17.5];
 
+module Battery()
+{
+    BattRad=1.5;
+    minkowski(){
+    cube(BattSize-[BattRad,BattRad,BattRad],center=true);
+    sphere(BattRad/2);
+        }
+    
+}
+
+
 module BattHld()
 {
     
     difference()
     {
         minkowski(){
-            cube(BattSize,center=true);
-            cube(thick*2,center=true);
+            Battery();
+            sphere(thick,center=true);
         }
-        cube(BattSize,center=true);
-        translate([0,-22,0]) cube([15,2,19],center=true); // minus end
+        Battery();
+        translate([0,-21,0]) cube([15,2,19],center=true); // minus end
         
         /*translate([0,15,0]) rotate([0,0,45]) cylinder(d=14,h=20,center=true,$fn=4);        
         translate([0,1,0]) rotate([0,0,45]) cylinder(d=14,h=20,center=true,$fn=4);
@@ -179,7 +190,7 @@ module body()
     difference()
     {
         copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,0]) completeRing(ang,0);
-        translate(BattPos) cube(BattSize,true);
+       translate(BattPos) Battery();
         
     }
     // side support
@@ -194,7 +205,11 @@ module body()
     
     translate(BattPos)BattHld();
     
-     copy_mirror([1,0,0]) translate([-16,-1,-height/2]) rotate([0,0,19]) cube([20,thick,height],true);
+     copy_mirror([1,0,0]) translate([-15.7,-1,-height/2]) rotate([0,0,19]) difference() 
+    {
+        cube([20,thick,height],true);
+        copy_mirror([1,0,0]) translate([5.5,0,0]) rotate([90,0,0]) cylinder(d=9,h=thick+2,center=true);
+    }
     
 
     // floor
