@@ -97,7 +97,8 @@ module torus(){
     translate([radius+trad, 0, 0])
     union()
     {
-        translate([-thick*1.8,trad-thick/2-0.15]) circle(d=thick+0.3);
+        //translate([-thick*1.8,trad-thick/2-0.15]) circle(d=thick+0.3);
+        translate([-thick*1.5,trad-thick/2-0.199]) circle(d=thick*1.1);
     difference()
     {
         circle(r = trad);
@@ -119,7 +120,6 @@ module STUFF(exp=false)
         
     if(true) // star - stack config
     {
-        //translate([-16,0,-3.5-dwn]) rotate([90,0,0]) ESC16x16(exp);
         copy_mirror([1,0,0]) translate([15,-0.5+3,-3.5-dwn]) rotate([90,0,180-17]) ESC16x16(exp);
         translate(FCpos) rotate([0,-90,180]) REVO16x16(exp);
         translate([-10,11,-5-dwn]) rotate([90,0,90-35]) RX_XM(exp);
