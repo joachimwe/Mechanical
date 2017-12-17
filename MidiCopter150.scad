@@ -78,7 +78,7 @@ module BODY()
 	lb= 23; // top piece length
 	wb= 23; // top piece width
 	h=7; // top piece height offset
-	r= 4; // top piece radius
+	r= 3; // top piece radius
     ht= 5; // top piece thickness
 
 	difference()
@@ -97,7 +97,7 @@ module BODY()
                 {
                     translate (i) cylinder(h=ht,r=r, $fn=30);
                 }  
-                translate(campos) rotate([0,90,0]) cylinder(d=6,h=26,center=true);
+                translate(campos) rotate([0,90,0]) cylinder(d=6,h=24,center=true);
                
             }
         
@@ -263,7 +263,7 @@ module STUFF(exp=false)
 
 //rotate([-90-(lower_angle+upper_angle)/2,0,0])
 
-//BODY();  
+translate([50,0,0]) BODY();  
 
 //color("lightblue") 
 //translate([50,0,0]) COVER();
