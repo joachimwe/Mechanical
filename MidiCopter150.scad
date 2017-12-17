@@ -13,9 +13,21 @@ $fn=24;
 campos = [0,10,27];
 
 lower_angle = 30;
-upper_angle = 50;
+upper_angle = 45;
 
 CoverThickness = 0.6;
+
+module copy_mirror(vec=[0,1,0])
+{
+    children();
+    mirror(vec) children();
+}
+
+module copy_rotate(vec=[0,90,0])
+{
+    children();
+    rotate(vec) children();
+}
 
 module Standoffs (sq,h){
 
@@ -35,29 +47,24 @@ module Standoffs (sq,h){
 
 }
 
-module copy_mirror(vec=[0,1,0])
-{
-    children();
-    mirror(vec) children();
-}
+
 
 module LowerStandoff(){
     h=3.5;
-    hull()
+ 
+    for(i = [ 
+             [  10,   10,  0],
+             [ 10, -10, 0],
+             [-10,  10, 0],
+             [-10,  -10, 0] ])
     {
-        for(i = [ 
-                 [  10,   10,  0],
-                 [ 10, -10, 0],
-                 [-10,  10, 0],
-                 [-10,  -10, 0] ])
-        {
-            difference()
-               {     
-                translate (i) cylinder(h,d=15, $fn=30);
-                translate (i) cylinder(h,d=2.1, $fn=30);
-               }
-        }   
-    }
+        difference()
+           {     
+            translate (i) cylinder(h,d=7, $fn=30);
+            translate (i) cylinder(h,d=2.1, $fn=30);
+           }
+    }   
+    
     
     dh=5;
     // translate ([15.75,0,dh/2]) cube([3.5,27,dh],center=true);
@@ -66,8 +73,7 @@ module LowerStandoff(){
 }
 
 
-
-module BODY2() 
+module BODY() 
 {
 	lb= 23; // top piece length
 	wb= 23; // top piece width
@@ -131,24 +137,37 @@ module BODY2()
     }
 }
 
-module ProtectorRing()
-{
-    translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,9]) cylinder(d=20,h=5,center=true); // Protector ring
-}
 
-
-module innerCover()
+module innerCover(base=true)
 {
-    lr=7.5+7.5; 
+    h=9.5;
     
-    hull() // cam support
-            {
-              LowerStandoff();  
-                translate(campos) rotate([0,90,0]) cylinder(d=6,h=26,center=true);
-                ProtectorRing();
+    hull() 
+        {
+              
+                translate(campos) rotate([0,90,0]) cylinder(d=6,h=26,center=true); // cam support cylinder
+                translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,8]) cylinder(d=16,h=4,center=true); // Protector ring
                 
-                 translate(campos)  rotate([30,0,0]) translate([0,-10,1]) minkowski(){cube([17,21,15],center=true);sphere(3);} // cam extension
-                
+                 translate(campos)  rotate([(lower_angle+upper_angle)/2,0,0]) translate([0,-9,0]) minkowski(){cube([16,24,19],center=true);sphere(2);} // cam extension
+
+        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 11, 0]) cylinder(h=h,d=9, $fn=24);
+
+
+        }
+        if(base)
+    hull() 
+    {                  
+
+        
+        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 11, 0]) cylinder(h=h,d=9, $fn=24);
+
+        rad= 2;
+        //copy_mirror([0,1,0]) translate([0,36.7/2+rad,-2]) cylinder(h=2,r=rad, $fn=24);
+        rad2=2;
+        //copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate([36.7/2+4+rad2,2+5,0]) cylinder(h=2,r=rad2, $fn=24);
+                 
+        rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,0]) cylinder(h=3,d=2.4, $fn=24);
+        
             }
 }
 
@@ -177,13 +196,15 @@ module FRAME()
 {
     translate([0,0,-1])
    union(){ 
-    difference(){
+    difference()
+    {
         cube([37+10,37+10,2],center=true);
-        r=10;
-        for(i=[0,90,180,270])
+        union()
         {
-            rotate([0,0,i]) translate([0,-37/2-r,0]) cylinder(r=r,h=3,center=true);
+                rad=10;
+                copy_rotate([0,0,90]) copy_mirror([1,0,0]) translate([(36.7+rad*2)/2,0,0]) cylinder(r=rad,h=2.1,center=true);
         }
+    
     }
         for(i=[0,90,180,270])
         {
@@ -192,16 +213,17 @@ module FRAME()
             translate([50,0,0]) cube([70,20,2],center=true);
         }
     }
+    
 }
 
 
 module STUFF(exp=false)
 {
-    translate([0,0,3.5]) ESC20x20(exp);
+    translate([0,0,3.5]) rotate([0,0,0]) ESC20x20(exp);
     translate([0,0,8.5]) OMNIBUS20x20(exp);
 
     union(){
-        for(i=[lower_angle:10:upper_angle])
+        for(i=[lower_angle:5:upper_angle])
             {
                 translate(campos)  rotate([-90+i,0,0]) RUNCAM_SWIFT(exp);
         }       
@@ -211,7 +233,7 @@ module STUFF(exp=false)
         //translate(campos) rotate([(lower_angle+upper_angle)/2,0,0]) translate([0,-10,0])  cube([19,25,19],center=true); // cam access
 //        translate(campos) rotate([0,0,0]) translate([0,-(campos.y),-10])  cube([19,19,19],center=true); // cam access
     }
-    //translate([-5,-5,13])  rotate([0,0,0])TX_MM213TL(); // runcam has TX !
+    
     translate([0,-7,17]) rotate([45,0,0]) BEEPER(exp);
 
     translate([-2,-4,12.8]) rotate([0,0,90]) RX_XMPLUS(exp);
@@ -221,30 +243,33 @@ module STUFF(exp=false)
           //rotate([0,0,i])  translate([75,0,0]) motor1807();
     }
 
-     // lower bolts
-    translate([0,0,1.75])
-    copy_mirror([1,0,0]) 
-    for(i = [ 
-     [  17.5,   8,  0],
-     [ 17.5, -8, 0]])
-    {
-        translate (i) rotate([0,90,0]) cylinder(h=15,d=1.75, $fn=30,center=true);
-        translate (i) rotate([0,90,0]) translate([0,0,3]) cylinder(h=6,d=2.2, $fn=30,center=true);
-    }
+  
     
     color("grey") translate([0,0,1]) cube([60,12,2],center=true); // Velcro
 
 
 }
 
-//STUFF(false);
+//STUFF(true);
 
 //rotate([-90-(lower_angle+upper_angle)/2,0,0])
-BODY2();  
+
+//BODY();  
 
 //color("lightblue") 
-translate([50,0,0]) COVER();
+//translate([50,0,0]) COVER();
 
 //FRAME();
+difference()
+{
+    minkowski()
+    {
+        innerCover(true);
+        sphere(1);
+    }   
+   innerCover(false);
+   STUFF(true); 
+   FRAME();
+}
 
 

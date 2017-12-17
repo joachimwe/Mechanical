@@ -152,40 +152,45 @@ module copy_mirror(vec=[0,1,0])
 module ESC20x20(clr=false) 
 {
 	l = 20/2;
-	lb= 27;
-	wb= 31;
+	lb= 31.0;
+	wb= 27.5;
 	h=1.0;
 	r= 4;
 	difference(){
 
 		//PCB
-		color("green") hull()
+        union()
         {
-			w= (wb-r)/2;
-			d = (lb-r)/2;
-			for(i = [ 
-			         [  w,   d,  0],
-			         [ w, -d, 0],
-			         [-w,  d, 0],
-			         [-w,  -d, 0] ])
-			{
-				translate (i) cylinder(h,d=r);
-			}
-		}
-        
-		for(i = [ 
-		         [  l,   l,  0],
-		         [ l, -l, 0],
-		         [-l,  l, 0],
-		         [-l,  -l, 0] ])
+            color("green") hull()
+            {
+                w= (wb-r)/2;
+                d = (wb-r)/2;
+                for(i = [ 
+                         [  w,   d,  0],
+                         [ w, -d, 0],
+                         [-w,  d, 0],
+                         [-w,  -d, 0] ])
+                {
+                    translate (i) cylinder(h,d=r);
+                }
+            }
+            
+            color("green") translate([0,0,h/2]) cube([19.5,31,h],true);
+        }
+		
+        for(i = [ 
+		         [  l,   l,  -0.01],
+		         [ l, -l, -0.01],
+		         [-l,  l, -0.01],
+		         [-l,  -l, -0.01] ])
 		{   
-			translate (i) cylinder(h,d=2.2);
+			translate (i) cylinder(h+0.1,d=2.2,$fn=12);
 		}
 	}
 	thick= clr?5:4.5;
-	color("grey") translate([0,0,h/2]) cube([clr?20:16.5,27,thick],true);
-	color("grey") translate([0,0,h/2]) cube([27,16.5,thick],true);
-    color("grey") translate([14,0,2.5]) cube([7,9,3],true);
+    color("grey") translate([0,0,h/2]) cube([15,25.5,thick],true); // ok
+	color("grey") translate([0,0,h/2]) cube([27,16.5,thick],true); // ok
+    color("white") translate([14,0,2.5]) cube([7,9,3],true);
     
     // cables
     if(clr)
@@ -193,7 +198,7 @@ module ESC20x20(clr=false)
     copy_mirror([0,1,0]) for(i = [-3.5*2.5:3.5:10] 
 		        )
 		{   
-			color("red") translate ([ i, -10, +1.0+0.8]) rotate([90,0,0]) cylinder(h=15,d=2,$fn=12);
+			color("red") translate ([ i, -10-3, +1.0+0.8]) rotate([90,0,0]) cylinder(h=10,d=2.5,$fn=12);
 		}
     }
     
