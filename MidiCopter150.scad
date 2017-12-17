@@ -145,8 +145,8 @@ module innerCover(base=true)
     hull() 
         {
               
-                translate(campos) rotate([0,90,0]) cylinder(d=6,h=26,center=true); // cam support cylinder
-                translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,8]) cylinder(d=16,h=4,center=true); // Protector ring
+                translate(campos) rotate([0,90,0]) cylinder(d=6,h=10+10+9,center=true); // cam support cylinder
+                translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5]) cylinder(d=16,h=4,center=true); // Protector ring
                 
                  translate(campos)  rotate([(lower_angle+upper_angle)/2,0,0]) translate([0,-9,0]) minkowski(){cube([16,24,19],center=true);sphere(2);} // cam extension
 
@@ -155,6 +155,7 @@ module innerCover(base=true)
 
         }
         if(base)
+        {
     hull() 
     {                  
 
@@ -169,6 +170,14 @@ module innerCover(base=true)
         rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,0]) cylinder(h=3,d=2.4, $fn=24);
         
             }
+        }
+        else
+        {
+               rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,0]) cylinder(h=5,d=2.4, $fn=24);  
+            
+            translate([0,0,-2]) cube([100,100,4],true);
+            
+        }
 }
 
 module COVER()
