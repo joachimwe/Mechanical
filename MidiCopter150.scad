@@ -140,7 +140,7 @@ module BODY()
 
 module innerCover(rem=false)
 {
-    h=6;
+    h=10;
     
     hull() 
         {
@@ -148,13 +148,13 @@ module innerCover(rem=false)
                 translate(campos) rotate([0,90,0]) cylinder(d=6,h=10+10+9,center=true); // cam support cylinder
                 translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5]) cylinder(d=16,h=4,center=true); // Protector ring
                 
-                 translate(campos)  rotate([(lower_angle+upper_angle)/2,0,0]) translate([0,-9,0]) 
+                 translate(campos)  rotate([(lower_angle+upper_angle)/2-10,0,0]) translate([0,-10,-0.5]) 
             minkowski(){
-            cube([16,24,19],center=true);
+            cube([18,24,18],center=true);
             cube(2);
             } // cam extension
 
-        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 10, 0]) cylinder(h=h,d=9, $fn=12);
+        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 10, 0]) cylinder(h=h,d=10, $fn=12);
 
 
         }
@@ -251,9 +251,9 @@ module STUFF(exp=false)
 //        translate(campos) rotate([0,0,0]) translate([0,-(campos.y),-10])  cube([19,19,19],center=true); // cam access
     }
     
-    translate([-4,-8,19]) rotate([45,0,0]) BEEPER(exp);
+    translate([-4,-8,17]) rotate([45,0,0]) BEEPER(exp);
 
-    translate([-2,-4,13.8]) rotate([180,0,90]) RX_XMPLUS(exp);
+    translate([-2.1,-4,13.5]) rotate([180,0,90]) RX_XMPLUS(exp);
 
     for(i=[45:90:360])
     {
@@ -267,7 +267,7 @@ module STUFF(exp=false)
 
 }
 
-//translate([50,0,0]) STUFF(true);
+//translate([50,0,0]) STUFF(false);
 //FRAME();
 
 //rotate([-90-(lower_angle+upper_angle)/2,0,0])
