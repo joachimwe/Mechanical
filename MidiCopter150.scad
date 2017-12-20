@@ -10,10 +10,10 @@ use <libCopterParts.scad>
 
 $fn=24;
 
-campos = [0,10,27];
+campos = [0,10,28];
 
 lower_angle = 30;
-upper_angle = 45;
+upper_angle = 50;
 
 CoverThickness = 0.6;
 
@@ -138,9 +138,9 @@ module BODY()
 }
 
 
-module innerCover(base=true)
+module innerCover(rem=false)
 {
-    h=9.5;
+    h=6;
     
     hull() 
         {
@@ -148,57 +148,65 @@ module innerCover(base=true)
                 translate(campos) rotate([0,90,0]) cylinder(d=6,h=10+10+9,center=true); // cam support cylinder
                 translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5]) cylinder(d=16,h=4,center=true); // Protector ring
                 
-                 translate(campos)  rotate([(lower_angle+upper_angle)/2,0,0]) translate([0,-9,0]) minkowski(){cube([16,24,19],center=true);sphere(2);} // cam extension
+                 translate(campos)  rotate([(lower_angle+upper_angle)/2,0,0]) translate([0,-9,0]) 
+            minkowski(){
+            cube([16,24,19],center=true);
+            cube(2);
+            } // cam extension
 
-        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 11, 0]) cylinder(h=h,d=9, $fn=24);
+        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 10, 0]) cylinder(h=h,d=9, $fn=12);
 
 
         }
-        if(base)
+        if(rem)
         {
-    hull() 
+               rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,0]) cylinder(h=6,d=2.0, $fn=12);  
+            
+        }
+}
+
+module CoverBase()
+{
+    hzyl = 10;
+    dzyl = 12;
+    
+    union() 
     {                  
-
-        
-        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 11, 0]) cylinder(h=h,d=9, $fn=24);
-
-        rad= 2;
-        //copy_mirror([0,1,0]) translate([0,36.7/2+rad,-2]) cylinder(h=2,r=rad, $fn=24);
-        rad2=2;
-        //copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate([36.7/2+4+rad2,2+5,0]) cylinder(h=2,r=rad2, $fn=24);
-                 
-        rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,0]) cylinder(h=3,d=2.4, $fn=24);
-        
-            }
-        }
-        else
+        hull() // four cylinders
         {
-               rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,0]) cylinder(h=5,d=2.4, $fn=24);  
-            
-            translate([0,0,-2]) cube([100,100,4],true);
-            
+            copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 10, 0]) cylinder(h=hzyl,d=dzyl, $fn=12);
         }
+        copy_rotate([0,0,90]) copy_rotate([0,0,90]) copy_rotate([0,0,90]) 
+        hull()
+        {
+            translate ([10, 10, 0]) cylinder(h=hzyl,d=dzyl, $fn=12);
+     
+            rotate([0,0,-45]) translate([0,52.6/2+2.4,0]) cylinder(h=3,d=5, $fn=12);
+        }
+            }
+  
 }
 
 module COVER()
 {
-    //color("lightblue")
-    difference(){
-    union()
-    {difference()
-    { minkowski()
-        {innerCover();
-            sphere(CoverThickness);}
-            innerCover();
-            translate([0,0,-1.5])cube([100,100,3],center=true); // remove lower skin
-           
-            //LowerStandoff(); // already in?
-        }
-        ProtectorRing();
+    color("lightblue")
+    difference()
+    {
+        union()
+        {
+            CoverBase();
+            minkowski()
+            {
+                innerCover(false);
+                sphere(1);
+            }
+        }   
+        innerCover(true);
+        STUFF(true); 
+        translate([0,0,-2+0.001]) cube([100,100,4],true); // remove lower skin
+        translate([0,0,3])cube([19,100,6],center=true); // remove space for wiring
+
     }
-         STUFF(true);
-            BODY2(); 
-}
 }
 
 module FRAME()
@@ -234,7 +242,7 @@ module STUFF(exp=false)
     union(){
         for(i=[lower_angle:5:upper_angle])
             {
-                translate(campos)  rotate([-90+i,0,0]) RUNCAM_SWIFT(exp);
+                translate(campos)  rotate([-90-i,180,0]) RUNCAM_SWIFT(exp);
         }       
     }
     if(exp)
@@ -243,9 +251,9 @@ module STUFF(exp=false)
 //        translate(campos) rotate([0,0,0]) translate([0,-(campos.y),-10])  cube([19,19,19],center=true); // cam access
     }
     
-    translate([0,-7,17]) rotate([45,0,0]) BEEPER(exp);
+    translate([-4,-8,19]) rotate([45,0,0]) BEEPER(exp);
 
-    translate([-2,-4,12.8]) rotate([0,0,90]) RX_XMPLUS(exp);
+    translate([-2,-4,13.8]) rotate([180,0,90]) RX_XMPLUS(exp);
 
     for(i=[45:90:360])
     {
@@ -259,26 +267,17 @@ module STUFF(exp=false)
 
 }
 
-//STUFF(true);
+//translate([50,0,0]) STUFF(true);
+//FRAME();
 
 //rotate([-90-(lower_angle+upper_angle)/2,0,0])
 
 translate([50,0,0]) BODY();  
 
 //color("lightblue") 
-//translate([50,0,0]) COVER();
+COVER();
 
-//FRAME();
-difference()
-{
-    minkowski()
-    {
-        innerCover(true);
-        sphere(1);
-    }   
-   innerCover(false);
-   STUFF(true); 
-   FRAME();
-}
+//
+
 
 

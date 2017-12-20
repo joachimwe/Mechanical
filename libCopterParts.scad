@@ -350,10 +350,19 @@ module RUNCAM_SWIFT(ext=false)
             }
             //translate([0,0,-4.5-Conn_Len/2]) cube([19,19,9+Conn_Len],true);
             color("orange") translate([0,0,-1.5]) cube([14,13.3,7],true);
-            color("darkblue") translate([0,0,-1.9-5]) cube([19,19,3.8],true); // PCA
+            color("darkgreen") translate([0,0,-1.9-5]) cube([19,19,3.8],true); // PCA
             color("lightgrey") translate([4.4,7.9,-2-5-3.5]) cube([10.2,3.2,3.5],true); // connector
             
-            color("lightgrey") translate([0,0,-2-5-3.75]) cube([19,19,5],true); // TX (partly !!!)
+            translate([0,0,-10]) 
+            union()// TX
+            {
+                cube([19,19,8],true); 
+                translate([8,-8,-2]) cylinder(d=5.3,h=4,$fn=12);
+                translate([-8,8,-2]) cylinder(d=5.3,h=4,$fn=12);
+                translate([-5,1,-1])cube([9,19,1],true); 
+                
+                 translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d=5,h=43);
+            }
             
         }
         rotate ([0,90,0]) cylinder(d=2,h=20,center=true); // drill M2
