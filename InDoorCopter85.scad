@@ -10,7 +10,7 @@ https://github.com/fabianhu/
 $fn = 60;
 radius = 2 * (25.4/2)+0.5; // propeller radius
 echo("Prop radius: ",radius);
-thick = 0.7; // rest body thickness
+thick = 0.8; // rest body thickness
 fthick = 0.7; // fin thickness
 trad = 3.0; // intake aerodynamic radius
 height = 13; //height of tunnel
@@ -54,7 +54,7 @@ rdiv =5;
                     cylinder(r=radius+thick,h=height);  // upper frame // 1=unten
                 }
                 translate([0,0,-1]) cylinder(r=radius,h=height+2);
-                translate([0,-radius,4]) rotate([90,0,0]) cylinder(d=4,h=3,center=true); // cable bore
+                translate([0,-radius,4-2.5]) rotate([90,0,0]) cylinder(d=4,h=3,center=true); // cable bore
             }
 
             translate([0,0,-height+cos(ang)*dlt+thick/2]) 
@@ -205,22 +205,32 @@ module body()
     
     translate(BattPos)BattHld();
     
-     copy_mirror([1,0,0]) translate([-15.7,-1,-height/2]) rotate([0,0,19]) difference() 
+     copy_mirror([1,0,0]) translate([-15.7-2,-1-2,-height/2+3.5]) rotate([0,0,0]) difference() 
     {
-        cube([20,thick,height],true);
-        copy_mirror([1,0,0]) translate([5.5,0,0]) rotate([90,0,0]) cylinder(d=9,h=thick+2,center=true);
+        cube([22,thick,height+7],true);
+        copy_mirror([1,0,0]) translate([5.0,0,0]) rotate([90,0,0]) cylinder(d=9,h=thick+2,center=true);
     }
     
 
     // floor
-    difference()
+difference()
     {
-            translate([0,16,-height+thick/2]) cube([dx+8,dy-18,thick],center=true);
-            copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height-1])   cylinder(r=radius,h=2); // clean out main bores
-            translate([0,19,-height]) cylinder(h=2,d=14,center=true); // front center
-            copy_mirror([1,0,0]) translate([11,6,-height]) cylinder(h=2,d=10,center=true);
+            //translate([0,16,-height+thick/2]) cube([dx+8,dy-18,thick],center=true);
+      
+        // 
+        minkowski()
+        {
+            innertop();
+            cube(thick*2,center=true);
+        }
+        innertop(); 
+        cube([100,100,5],center=true);
+            
+        copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height-1])   cylinder(r=radius,h=2); // clean out main bores
+        translate([0,19,-height]) cylinder(h=30,d=12); // front center
+        copy_mirror([1,0,0]) translate([11,6,-height]) cylinder(h=30,d=8); 
         
-         translate([0,-4,-height]) cylinder(d=10,h=20,center=true);
+        translate(BattPos) Battery();
             
     }
     
@@ -231,20 +241,20 @@ module body()
     {
     union()
     {
-        translate([0.5-2.5/2,9,-8.5]) cube([6.5,4,4],true);
-        translate([0.5,-9,-8.5]) cube([4,4,4],true);
+        translate([0.5-2.5/2+0.5,9,8.5]) cube([5.5,4,4],true);
+        translate([0.5,-9,8.5]) cube([4,4,4],true);
         
-        translate([-1.5,10.25,6-1]) rotate ([0,0,0]) cube([5,7,8],true);
+        translate([-1.5-0.5,10.25-4,-8]) rotate ([0,0,-10]) cube([4.5,7,4],true);
         
         //reinforce stuff
-        translate([-0.4,-11,-10]) rotate([0,0,60]) cube([3,10,1]);
-        translate([1,-8.5,-10]) rotate([0,0,-65]) cube([3,13.5,1]);
-        translate([-0.4,-16.7,-10]) rotate([0,0,0]) cube([3,6,1]);
+        translate([-0.4,-11,9]) rotate([0,0,60]) cube([3,9,1]);
+        translate([1,-8.5,9]) rotate([0,0,-65]) cube([3,12.5,1]);
+        translate([-0.4,-18,9]) rotate([0,0,0]) cube([3,10,1]);
         
     }
-         translate([-1+2,10.25,7-5]) rotate ([0,45,0]) cube([4,7,10],true); 
+        // translate([-1+2,10.25,7-5]) rotate ([0,45,0]) cube([4,7,10],true); 
          rotate([0,-90,180]) REVO16x16(true);
-         translate([0.5,0,-8.5]) cube([1.2,20.6,4],true);
+         translate([0.5,0,8.5]) cube([1.2,20.6,4],true);
     }
     
     // cam holder
@@ -253,8 +263,8 @@ module body()
     {
        union()
        {
-           translate([0,1,-5]) cube([15.2,14.0,4],true);
-           translate([0,2.65,-7]) rotate([0,90,0]) cylinder(d=10,h=14.5,center=true);
+           translate([0,-2,-4]) cube([15.2,14.0,4],true);
+           translate([0,6.0,-6]) rotate([0,90,0]) cylinder(d=5,h=17.2,center=true);
            
        }
        CAMERA(true);
@@ -264,6 +274,21 @@ module body()
     
     //STUFF(false);    
 
+}
+
+module innertop()
+{
+     translate([0,0,1.5]) 
+    difference()
+    {
+        linear_extrude(height = 6.5,scale = 0.8)
+        {
+        polygon([[-8,35],[8,35],[38,-2],[-38,-2]]);
+        }
+        copy_mirror([1,0,0]) translate([dx/2,dy/2,0]) cylinder(r=radius+trad-thick,h=20);
+         translate([0,-4,-height]) cylinder(d=12,h=30);
+    }
+    
 }
 
 
