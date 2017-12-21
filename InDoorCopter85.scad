@@ -22,7 +22,7 @@ dy=radius*2+2*trad-2*thick+0.3+2;
 
 campos=[0,42,-5.3+3];
 
-ang = 25; // fin angle
+ang = 20; // fin angle
 dlt=2.5; // fin height
 
 drawstuff=true;
@@ -63,6 +63,17 @@ rdiv =5;
                 rotate([0,0,i+zer]) translate([rot>0?4:-4,0,0]) rotate([90,90-rot,0]) Fin();
             }
             translate([0,0,-height]) cylinder(d=15+thick*2,h=5); // motor carrier (bell diameter from motor)
+
+            for(i=[0:360/5/2:360])
+            {
+                 rotate([0,0,i-10]) translate([radius+thick,0,-height])  
+                 difference()
+                {
+                 cylinder(r=thick,h=15);
+                 translate([-1,0,14.5]) rotate([0,30,0]) cube(2,center=true);
+                 }
+            }
+
             
             
         }
@@ -92,20 +103,22 @@ module Fin(){
     }
 } 
 
-module torus(){
+module torus() // might not work for every thickness and trad.
+{
     rotate_extrude(convexity = 5 )
     translate([radius+trad, 0, 0])
-    union()
+    union() // roundness at top
     {
         //translate([-thick*1.8,trad-thick/2-0.15]) circle(d=thick+0.3);
-        translate([-thick*1.5,trad-thick/2-0.199]) circle(d=thick*1.1);
+        translate([-thick*1.5,trad-thick/2-0.58]) circle(d=thick+0.5);
     difference()
     {
         circle(r = trad);
-        translate([0,0]) circle(r = trad-thick);
+        translate([-0.78,0]) circle(r = trad-thick-0.78);
         translate([-0.5-0.5,-0.5]) square([5,5]);
         
-        translate([-5,-10]) square([10,10]);
+        translate([-5,-10]) square([10,10]); // cut lower bound 
+        translate([-1.45,2]) square([1,1]); // cut the upper "Fitzel"
     }
     }
 }
@@ -205,17 +218,20 @@ module body()
     
     translate(BattPos)BattHld();
     
-     copy_mirror([1,0,0]) translate([-15.7-2,-1-2,-height/2+3.5]) rotate([0,0,0]) difference() 
+    // batt side support
+    copy_mirror([1,0,0]) translate([-15.7-2,-1-2,-height/2+1.5]) rotate([0,0,0]) difference() 
     {
-        cube([22,thick,height+7],true);
-        copy_mirror([1,0,0]) translate([5.0,0,0]) rotate([90,0,0]) cylinder(d=9,h=thick+2,center=true);
+        cube([22,thick,height+4],true);
+        translate([0,0,1.5]) rotate([90,0,0]) cylinder(d=11,h=thick+2,center=true);
     }
     
-
+    
+    
     // floor
 difference()
     {
-            //translate([0,16,-height+thick/2]) cube([dx+8,dy-18,thick],center=true);
+        union()
+        {
       
         // 
         minkowski()
@@ -223,12 +239,17 @@ difference()
             innertop();
             cube(thick*2,center=true);
         }
+        translate([3,29,0]) cylinder(h=11,d=8); // TX antenna supp
+        }
         innertop(); 
         cube([100,100,5],center=true);
             
         copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height-1])   cylinder(r=radius,h=2); // clean out main bores
         translate([0,19,-height]) cylinder(h=30,d=12); // front center
         copy_mirror([1,0,0]) translate([11,6,-height]) cylinder(h=30,d=8); 
+        
+        translate([3,29,-height]) cylinder(h=31-4,d=5); // TX antenna hole
+        translate([3,29,-height+31-10]) cylinder(h=3,d1=5,d2=8); // TX antenna hole
         
         translate(BattPos) Battery();
             

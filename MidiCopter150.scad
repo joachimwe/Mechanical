@@ -160,7 +160,9 @@ module innerCover(rem=false)
         }
         if(rem)
         {
-               rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,0]) cylinder(h=6,d=2.0, $fn=12);  
+               rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,0]) cylinder(h=6,d=2.6, $fn=12);  
+                rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,3.0]) cylinder(h=6,d=5.5, $fn=6);  
+            rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,4.0]) cylinder(h=6,d1=5.5,d2=16, $fn=30);
             
         }
 }
