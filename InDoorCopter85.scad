@@ -110,11 +110,12 @@ module torus() // might not work for every thickness and trad.
     union() // roundness at top
     {
         //translate([-thick*1.8,trad-thick/2-0.15]) circle(d=thick+0.3);
-        translate([-thick*1.5,trad-thick/2-0.58]) circle(d=thick+0.5);
+       # translate([-trad/2+0.2,trad-thick/2-0.40]) circle(d=thick+0.7);
     difference()
     {
         circle(r = trad);
-        translate([-0.78,0]) circle(r = trad-thick-0.78);
+        //translate([-0.78,0]) circle(r = trad-thick-0.78);
+        translate([0,-0.5]) circle(r = trad-thick+0.06);
         translate([-0.5-0.5,-0.5]) square([5,5]);
         
         translate([-5,-10]) square([10,10]); // cut lower bound 
@@ -176,7 +177,7 @@ module BattHld()
             sphere(thick,center=true);
         }
         Battery();
-        translate([0,-21,0]) cube([15,2,19],center=true); // minus end
+        translate([0,-21,-0.5]) cube([15,2,21],center=true); // minus end
         
         /*translate([0,15,0]) rotate([0,0,45]) cylinder(d=14,h=20,center=true,$fn=4);        
         translate([0,1,0]) rotate([0,0,45]) cylinder(d=14,h=20,center=true,$fn=4);
@@ -219,7 +220,7 @@ module body()
     translate(BattPos)BattHld();
     
     // batt side support
-    copy_mirror([1,0,0]) translate([-15.7-2,-1-2,-height/2+1.5]) rotate([0,0,0]) difference() 
+    copy_mirror([1,0,0]) translate([-15.7-2,-1-2,-height/2+2.05]) rotate([0,0,0]) difference() 
     {
         cube([22,thick,height+4],true);
         translate([0,0,1.5]) rotate([90,0,0]) cylinder(d=11,h=thick+2,center=true);
