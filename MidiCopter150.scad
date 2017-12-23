@@ -10,7 +10,7 @@ use <libCopterParts.scad>
 
 $fn=24;
 
-campos = [0,10,28];
+campos = [0,12,28];
 
 lower_angle = 30;
 upper_angle = 50;
@@ -255,7 +255,7 @@ module STUFF(exp=false)
     
     translate([-4,-8,17]) rotate([45,0,0]) BEEPER(exp);
 
-    translate([-2.1,-4,13.5]) rotate([180,0,90]) RX_XMPLUS(exp);
+    translate([-2.1,-2,12.5]) rotate([180,0,90]) RX_XMPLUS(exp);
 
     for(i=[45:90:360])
     {
