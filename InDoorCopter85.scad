@@ -64,7 +64,7 @@ rdiv =5;
             }
             translate([0,0,-height]) cylinder(d=15+thick*2,h=5); // motor carrier (bell diameter from motor)
 
-            for(i=[0:360/5/2:360])
+            for(i=[0:360/5:360])
             {
                  rotate([0,0,i-10]) translate([radius+thick,0,-height])  
                  difference()
@@ -128,8 +128,12 @@ FCpos= [-3,13+6,-3.2-height + 14];
 
 module STUFF(exp=false)
 {
-    translate(campos) rotate([-90+30,0,0]) CAMERA(exp);
-
+    translate(campos) rotate([-90+30,0,0]) 
+    union()
+    {
+        CAMERA(exp);
+        translate([0,0,-11]) cube([13,13,10],center=true); // room to install cam
+    }
     dwn = height - 14;
         
     if(true) // star - stack config
@@ -263,10 +267,10 @@ difference()
     {
     union()
     {
-        translate([0.5-2.5/2+0.5,9,8.5]) cube([5.5,4,4],true);
-        translate([0.5,-9,8.5]) cube([4,4,4],true);
+        translate([0.5-2.5/2+0.5,9,8.5]) cube([5.5,4,4],true); // upper front
+        translate([0.5,-9,8.5]) cube([4,4,4],true); // upper back
         
-        translate([-1.5-0.5,10.25-4,-8]) rotate ([0,0,-10]) cube([4.5,7,4],true);
+        translate([-1.5-0.5,10.25-4,-8.8]) rotate ([0,0,-10]) cube([4.5,7,4],true);
         
         //reinforce stuff
         translate([-0.4,-11,9]) rotate([0,0,60]) cube([3,9,1]);
@@ -286,7 +290,7 @@ difference()
        union()
        {
            translate([0,-2,-4]) cube([15.2,14.0,4],true);
-           translate([0,6.0,-6]) rotate([0,90,0]) cylinder(d=5,h=17.2,center=true);
+           translate([0,6.0,-6]) rotate([0,90,0]) cylinder(d=5,h=17.5,center=true);
            
        }
        CAMERA(true);
@@ -315,8 +319,10 @@ module innertop()
 
 
 
-
+difference()
+{
 body();
-    
+STUFF(true);   
+}  
 
 
