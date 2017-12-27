@@ -8,7 +8,7 @@ Copter parts library
 https://github.com/fabianhu/
 */ 
 
-
+translate([-110,0,0]) TX03();
 translate([-80,0,0]) REVO16x16(); 
 translate([-40,0,0]) ESC16x16();
 translate([-5,0,0]) ESC20x20();
@@ -21,8 +21,9 @@ translate([140,0,0]) BEEPER();
 translate([160,0,0]) RUNCAM_SWIFT();
 translate([200,0,0]) motor1103();
 translate([260,0,0]) motor1807();
+translate([300,0,0]) motor1105();
 
-
+translate([-110,40,0]) TX03(true);
 translate([-80,40,0]) REVO16x16(true); 
 translate([-40,40,0]) ESC16x16(true);
 translate([-5,40,0]) ESC20x20(true);
@@ -35,8 +36,24 @@ translate([140,40,0]) BEEPER(true);
 translate([160,40,0]) RUNCAM_SWIFT(true);
 translate([200,40,0]) motor1103(true);
 translate([260,40,0]) motor1807(true);
+translate([300,40,0]) motor1105(true);
 
 
+module TX03(clr=false)
+{
+  color("green") cube([19.6,17,4],center=true); // base PCA
+  color("grey") translate([0,11.3,1]) cube([5.5,5.6,4],center=true);  // antenna PCA
+  color("grey") translate([-6.3,4,2]) cube([7,9,3],center=true);  // LED
+  color("grey") translate([-6.3,7,-1]) cube([5,4,2],center=true);  // SW
+  color("grey") translate([0,14,2]) rotate([-90,0,0]) cylinder(d=3,h=54);
+  color("grey") translate([0,14+30,2]) rotate([-90,0,0]) cylinder(d=5,h=10);
+  color("grey") translate([6,-7,1.5]) cube([7,4,3],center=true);  // cabling
+  if(clr)
+  {
+       color("red") translate([-6.5,9,-1]) rotate([-90,0,0]) cylinder(d=2.5,h=30); 
+       color("red") translate([6,-7,1.5]) cube([7,4,10],center=true);  // cabling
+  }
+}
 
 module ESC16x16(clr=false) 
 {
@@ -190,7 +207,7 @@ module ESC20x20(clr=false)
 	thick= clr?5:4.5;
     color("grey") translate([0,0,h/2]) cube([15,25.5,thick],true); // ok
 	color("grey") translate([0,0,h/2]) cube([27,16.5,thick],true); // ok
-    color("white") translate([14,0,2.5]) cube([7,9,3],true);
+    // color("white") translate([14,0,2.5]) cube([7,9,3],true); // connector removed
     
     // cables
     if(clr)
@@ -405,7 +422,32 @@ module motor1103(ext=false)
     color("grey",1.0) translate([0,0,2.5]) cylinder(d=15.0,h=5); //bell
     }
     
-    color("lime",0.3) translate([0,0,3+4.5]) cylinder(d=1.8*25.4+0.25,h=4.5); //prop
+    color("lime",0.3) translate([0,0,3+4.5]) cylinder(d=2.0*25.4+0.25,h=4.5); //prop
+}
+
+module motor1105(ext=false)
+{
+    cylinder(d=14.5,h=12.5); 
+    union(){
+    color("grey",1.0) cylinder(d1=13,d2=14.4,h=1.5);
+    color("grey",1.0) translate([0,0,1.5])cylinder(d=14.4,h=1);
+    if(ext)
+    {
+        for(i=[0:90:360])
+        {
+            color("red") rotate([0,0,i-45]) translate([4.5,0,-10]) cylinder(d=2,h=10);
+            color("red") rotate([0,0,i-45]) translate([4.5,0,-10]) cylinder(d=4,h=8);
+        }
+        color("red") translate([10,0,1]) cube([10,4.3,2],center=true); // cable
+        color("blue") translate([9,0,4]) cube([5,4,5],center=true); // room for installation of cable
+    }
+    color("grey") translate([0,0,-1.5])cylinder(d=4,h=1.56); // free room for bearing 
+  
+    
+    color("grey",1.0) translate([0,0,2.5]) cylinder(d=15.0,h=5); //bell
+    }
+    
+    color("lime",0.3) translate([0,0,12.5]) cylinder(d=2.0*25.4+0.25,h=4.5); //prop
 }
 
 module motor1807(ext=false)

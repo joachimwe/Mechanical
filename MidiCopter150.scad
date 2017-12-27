@@ -13,7 +13,7 @@ $fn=24;
 campos = [0,12,28];
 
 lower_angle = 30;
-upper_angle = 50;
+upper_angle = 30;
 
 CoverThickness = 0.6;
 
@@ -191,7 +191,6 @@ module CoverBase()
 
 module COVER()
 {
-    color("lightblue")
     difference()
     {
         union()
@@ -202,6 +201,8 @@ module COVER()
                 innerCover(false);
                 sphere(1);
             }
+            translate([0,18,7.5]) rotate([0,90,0]) cylinder(d=5,h=32,center=true);
+            translate([0,-15.5,7.5]) rotate([0,90,0]) cylinder(d=5,h=31,center=true);
         }   
         innerCover(true);
         STUFF(true); 
@@ -247,13 +248,8 @@ module STUFF(exp=false)
                 translate(campos)  rotate([-90-i,180,0]) RUNCAM_SWIFT(exp);
         }       
     }
-    if(exp)
-    {
-        //translate(campos) rotate([(lower_angle+upper_angle)/2,0,0]) translate([0,-10,0])  cube([19,25,19],center=true); // cam access
-//        translate(campos) rotate([0,0,0]) translate([0,-(campos.y),-10])  cube([19,19,19],center=true); // cam access
-    }
     
-    translate([-4,-8,17]) rotate([45,0,0]) BEEPER(exp);
+    translate([-4,-8,16]) rotate([45,0,0]) BEEPER(exp);
 
     translate([-2.1,-2,12.5]) rotate([180,0,90]) RX_XMPLUS(exp);
 
@@ -265,7 +261,8 @@ module STUFF(exp=false)
   
     
     color("grey") translate([0,0,1]) cube([60,12,2],center=true); // Velcro
-
+    
+    cylinder(d=19,h=25,center=false);
 
 }
 
@@ -276,8 +273,7 @@ module STUFF(exp=false)
 
 translate([50,0,0]) BODY();  
 
-//color("lightblue") 
-COVER();
+color("lightblue") COVER();
 
 //
 

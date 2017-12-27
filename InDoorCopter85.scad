@@ -25,8 +25,6 @@ campos=[0,42,-5.3+3];
 ang = 20; // fin angle
 dlt=2.5; // fin height
 
-drawstuff=true;
-
 use <libCopterParts.scad>;
 
 // helper to morror while keeping the original.
@@ -110,7 +108,7 @@ module torus() // might not work for every thickness and trad.
     union() // roundness at top
     {
         //translate([-thick*1.8,trad-thick/2-0.15]) circle(d=thick+0.3);
-       # translate([-trad/2+0.2,trad-thick/2-0.40]) circle(d=thick+0.7);
+        translate([-trad/2+0.2,trad-thick/2-0.40]) circle(d=thick+0.7);
     difference()
     {
         circle(r = trad);
@@ -152,7 +150,7 @@ module STUFF(exp=false)
     translate([3,15+5,-4]) rotate([-90,-90,90]) TX_MM213TL(exp);
 
     
-     if(drawstuff)
+     if(exp)
      {   
         copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height+thick*2]) rotate([0,0,-90]) motor1103(exp);
      } 
