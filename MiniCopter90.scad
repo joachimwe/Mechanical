@@ -70,7 +70,7 @@ module BODY() {
 			// cam protector hull
 			hull()
 			{
-				translate(campos)  rotate([-90+camangle,0,0]) translate([0,0,2]) 
+				translate(campos)  rotate([-90+camangle,0,0]) translate([0,0,2.5]) 
             		//cube([12,12,5],true);
 				cylinder(d=12,h=10,center=true);
 
@@ -99,7 +99,9 @@ module BODY() {
 
 		cylinder(h=15,d=22);
 
-        // 
+        translate(campos) rotate([camangle,0,0]) translate([0,-7,0])cube([13,13,13],true);
+        hq=9.5;
+        translate([0,21,hq/2])cube([17,17,hq],center=true);
 
 	}
 
@@ -125,7 +127,9 @@ module STUFF(clr=false)
 	translate([0,4,15.5])  rotate([0,0,180])TX03(clr);
 	translate([-9,-9.5,13.5])  rotate([0,0,0])     BEEPER(clr);
     
-    copy_mirror([1,0,0]) translate([63/2,63/2,0]) motor1105();
+    copy_mirror([1,0,0]) translate([63/2,63/2,0]) motor1105(clr);
+    
+    
     
 }
 

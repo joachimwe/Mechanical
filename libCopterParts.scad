@@ -19,6 +19,7 @@ translate([100,0,0]) RX_XMPLUS();
 translate([120,0,0]) TX_MM213TL();
 translate([140,0,0]) BEEPER();
 translate([160,0,0]) RUNCAM_SWIFT();
+
 translate([200,0,0]) motor1103();
 translate([260,0,0]) motor1807();
 translate([300,0,0]) motor1105();
@@ -37,6 +38,24 @@ translate([160,40,0]) RUNCAM_SWIFT(true);
 translate([200,40,0]) motor1103(true);
 translate([260,40,0]) motor1807(true);
 translate([300,40,0]) motor1105(true);
+
+// calculates the camera angle geometry for 4:3 format (diagonal angle)
+module CAMANGLE(deg)
+{
+    dst=10;
+    h0=6;
+    w0=h0*4/3;//16/9;
+    
+    diag= (tan(deg/2)*dst)*2;
+    w1=diag/5*4;
+    
+    scl= w1/w0;
+    
+    linear_extrude(height = dst, center = false, scale = scl) 
+    {
+        square([w0,h0],true);
+    }
+}
 
 
 module TX03(clr=false)
@@ -265,7 +284,7 @@ module OMNIBUS20x20(clr=false)
     
 }
 
-
+// micro camera
 module CAMERA(clr=false) 
 {
 	h_lens=6.7;
@@ -284,7 +303,7 @@ module CAMERA(clr=false)
 
 	color("red") if(clr)
     {
-        translate([0,0,h_lens]) cylinder(d1=8,d2=35,h=10); // view angle
+        translate([0,0,h_lens]) CAMANGLE(150); // view angle
         //hull() {
         color("grey") cylinder(d=10,h=h_lens); // lens
         //translate([0,-10,0]) color("grey") cylinder(d=10,h=h_lens); // lens ext}
@@ -354,6 +373,8 @@ module BEEPER(clr=false)
 
 module RUNCAM_SWIFT(ext=false) 
 {
+    FOV=160; // 2.1mm = 160° angle
+    
     difference()
     {
         union()
@@ -370,7 +391,7 @@ module RUNCAM_SWIFT(ext=false)
             color("darkgreen") translate([0,0,-1.9-5]) cube([19,19,3.8],true); // PCA
             color("lightgrey") translate([4.4,7.9,-2-5-3.5]) cube([10.2,3.2,3.5],true); // connector
             
-            translate([0,0,-10]) 
+            translate([0,0,-11]) 
             union()// TX
             {
                 cube([19,19,8],true); 
@@ -387,17 +408,16 @@ module RUNCAM_SWIFT(ext=false)
     color("red")
     if(ext)
     {
-        translate([0,0,10]) cylinder(d1=10,d2=35,h=10); // view cone  
-        rotate ([0,90,0]) cylinder(d=2,h=30,center=true); // add M2+extension in case of substraction
+        translate([0,0,10]) CAMANGLE(FOV); // view angle
+        rotate ([0,90,0]) cylinder(d=2.1,h=30,center=true,$fn=12); // add M2+extension in case of substraction
         //translate([0,0,-1.5]) cube([16,16,9],true); // center block
         translate([0,0,-1.5]) cube([19,19,9],true); // center block
         
-        
+        translate([-10,-6.5,-8.5]) rotate ([0,90,0]) cylinder(d=2.5,h=30,center=true); // channel pushbutton
         //translate([0,0,-2-5-3.75]) cube([19,19,15],true); // TX extended for un/install
     }
     
-    //
-    //
+
 }
 
 module motor1103(ext=false)
@@ -422,12 +442,12 @@ module motor1103(ext=false)
     color("grey",1.0) translate([0,0,2.5]) cylinder(d=15.0,h=5); //bell
     }
     
-    color("lime",0.3) translate([0,0,3+4.5]) cylinder(d=2.0*25.4+0.25,h=4.5); //prop
+    color("lime",1.0) translate([0,0,3+4.5]) cylinder(d=2.0*25.4+0.25,h=4.5); //prop
 }
 
 module motor1105(ext=false)
 {
-    cylinder(d=14.5,h=12.5); 
+    //cylinder(d=14.5,h=12.5); 
     union(){
     color("grey",1.0) cylinder(d1=13,d2=14.4,h=1.5);
     color("grey",1.0) translate([0,0,1.5])cylinder(d=14.4,h=1);
@@ -444,10 +464,12 @@ module motor1105(ext=false)
     color("grey") translate([0,0,-1.5])cylinder(d=4,h=1.56); // free room for bearing 
   
     
-    color("grey",1.0) translate([0,0,2.5]) cylinder(d=15.0,h=5); //bell
+    color("grey",1.0) translate([0,0,2.5]) cylinder(d=15.0,h=5+5); //bell
     }
-    
-    color("lime",0.3) translate([0,0,12.5]) cylinder(d=2.0*25.4+0.25,h=4.5); //prop
+    if(ext)
+    color("red",1.0) translate([0,0,11.5]) cylinder(d=2.0*25.4+0.75,h=6.5,$fn=60); //prop
+    else
+    color("lime",1.0) translate([0,0,12.5]) cylinder(d=2.0*25.4+0.25,h=4.5); //prop    
 }
 
 module motor1807(ext=false)
@@ -472,8 +494,8 @@ module motor1807(ext=false)
     color("grey",1.0) translate([0,0,2.5]) cylinder(d=15.0,h=5); //bell
     }
     
-    color("lime",0.3) translate([0,0,18]) cylinder(d=102,h=6.2); //prop
-    color("black",0.3) translate([0,0,0]) cylinder(d=9,h=31,$fn=6); //prop
+    color("lime",1.0) translate([0,0,18]) cylinder(d=102,h=6.2); //prop
+    color("black",1.0) translate([0,0,0]) cylinder(d=9,h=31,$fn=6); //prop
    
 }
 

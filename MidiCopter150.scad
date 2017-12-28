@@ -144,9 +144,8 @@ module innerCover(rem=false)
     
     hull() 
         {
-              
                 translate(campos) rotate([0,90,0]) cylinder(d=6,h=10+10+9,center=true); // cam support cylinder
-                translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5]) cylinder(d=16,h=4,center=true); // Protector ring
+                translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5-1]) cylinder(d=16,h=4,center=true); // Protector ring
                 
                  translate(campos)  rotate([(lower_angle+upper_angle)/2-10,0,0]) translate([0,-10,-0.5]) 
             minkowski(){
@@ -154,7 +153,7 @@ module innerCover(rem=false)
             cube(2);
             } // cam extension
 
-        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 10, 0]) cylinder(h=h,d=10, $fn=12);
+        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 10, 0]) cylinder(h=h,d=rem?8:12, $fn=12);
 
 
         }
@@ -201,8 +200,10 @@ module COVER()
                 innerCover(false);
                 sphere(1);
             }
-            translate([0,18,7.5]) rotate([0,90,0]) cylinder(d=5,h=32,center=true);
-            translate([0,-15.5,7.5]) rotate([0,90,0]) cylinder(d=5,h=31,center=true);
+            translate([0,18,7.5]) rotate([0,90,0]) cylinder(d=5,h=32,center=true); // front stiffener
+            translate([0,-15.5,7.5]) rotate([0,90,0]) cylinder(d=5,h=31,center=true); // back stiffener
+            
+            translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5+2.75]) cylinder(d1=19,d2=19,h=3,center=true); // Protector ring
         }   
         innerCover(true);
         STUFF(true); 
@@ -266,6 +267,13 @@ module STUFF(exp=false)
 
 }
 
+
+difference()
+{
+    union()
+    {
+
+
 //translate([50,0,0]) STUFF(false);
 //FRAME();
 
@@ -273,8 +281,13 @@ module STUFF(exp=false)
 
 translate([50,0,0]) BODY();  
 
-color("lightblue") COVER();
-
+//color("lightblue")
+COVER();
+    }
+    
+        //color("blue") translate([50,0,0]) cube([100,100,100],center=true); // Velcro
+    
+    }
 //
 
 
