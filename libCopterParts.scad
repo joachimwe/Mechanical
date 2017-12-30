@@ -346,7 +346,7 @@ module TX_MM213TL(clr=false)
 {
 	color("grey") cube([19.5,22.5,3.5],true);
 
-	color("grey") translate([5,-10.5,0.5]) rotate ([0,90,0])  cylinder(d=4,h=27);
+	color("grey") translate([5,-10.5,0]) rotate ([0,90,0])  cylinder(d=4,h=27);
 	color("red") if(clr)
         {
 		translate([0,10,0.5]) cube([13,4,4],true);

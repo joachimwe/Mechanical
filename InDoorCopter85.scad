@@ -147,7 +147,7 @@ module STUFF(exp=false)
         translate([0,0,-2-dwn])  rotate([0,0,180]) REVO16x16(exp);
         translate([0,0,2.5-dwn]) rotate([0,0,0]) RX_XM(exp); 
     }
-    translate([3,15+5,-4]) rotate([-90,-90,90]) TX_MM213TL(exp);
+    translate([2,15+5.5,-4]) rotate([0,-90,180]) TX_MM213TL(exp);
 
     
      if(exp)
@@ -230,7 +230,7 @@ module body()
     
     
     
-    // floor
+    // floor / top
 difference()
     {
         union()
@@ -242,17 +242,23 @@ difference()
             innertop();
             cube(thick*2,center=true);
         }
-        translate([3,29,0]) cylinder(h=11,d=8); // TX antenna supp
+        translate([2,31,0]) cylinder(h=11,d=8); // TX antenna supp
         }
         innertop(); 
         cube([100,100,5],center=true);
             
         copy_mirror([1,0,0]) copy_mirror([0,1,0]) translate([dx/2,dy/2,-height-1])   cylinder(r=radius,h=2); // clean out main bores
         translate([0,19,-height]) cylinder(h=30,d=12); // front center
-        copy_mirror([1,0,0]) translate([11,6,-height]) cylinder(h=30,d=8); 
         
-        translate([3,29,-height]) cylinder(h=31-4,d=5); // TX antenna hole
-        translate([3,29,-height+31-10]) cylinder(h=3,d1=5,d2=8); // TX antenna hole
+        translate([-11,6,-height]) cylinder(h=30,d=8); 
+        hull()
+        {
+            translate([11,6,-height]) cylinder(h=30,d=8); 
+            translate([3,6,-height]) cylinder(h=30,d=5.5); 
+        }
+        
+        translate([2,31,-height]) cylinder(h=31-4,d=5); // TX antenna hole
+        translate([2,31,-height+31-10]) cylinder(h=3,d1=5,d2=8); // TX antenna hole
         
         translate(BattPos) Battery();
             
@@ -323,4 +329,5 @@ body();
 STUFF(true);   
 }  
 
+//STUFF(false); 
 
