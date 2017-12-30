@@ -71,6 +71,7 @@ module TX03(clr=false)
   {
        color("red") translate([-6.5,9,-1]) rotate([-90,0,0]) cylinder(d=2.5,h=30); 
        color("red") translate([6,-7,1.5]) cube([7,4,10],center=true);  // cabling
+       color("red") cube([19.6+1,17+1,4+1],center=true); // base PCA
   }
 }
 
@@ -305,7 +306,7 @@ module CAMERA(clr=false)
     {
         translate([0,0,h_lens]) CAMANGLE(150); // view angle
         //hull() {
-        color("grey") cylinder(d=10,h=h_lens); // lens
+        color("grey") cylinder(d=11,h=h_lens); // lens
         //translate([0,-10,0]) color("grey") cylinder(d=10,h=h_lens); // lens ext}
 		translate([0,0,-7]) cube([12.5,12.5,6],true); // conn block
 		//translate([0,-10,-7]) cube([12.5,12.5,6],true); // conn block ext

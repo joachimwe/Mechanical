@@ -138,6 +138,8 @@ module BODY()
 }
 
 
+InnerCoverPillarDia = 12;
+
 module innerCover(rem=false)
 {
     h=10;
@@ -153,7 +155,7 @@ module innerCover(rem=false)
             cube(2);
             } // cam extension
 
-        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 10, 0]) cylinder(h=h,d=rem?8:12, $fn=12);
+        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 10, 0]) cylinder(h=h,d=rem?8:InnerCoverPillarDia, $fn=12);
 
 
         }
@@ -169,7 +171,7 @@ module innerCover(rem=false)
 module CoverBase()
 {
     hzyl = 10;
-    dzyl = 12;
+    dzyl = InnerCoverPillarDia;
     
     union() 
     {                  
