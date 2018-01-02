@@ -148,7 +148,7 @@ module STUFF(exp=false)
         translate([0,0,-2-dwn])  rotate([0,0,180]) REVO16x16(exp);
         translate([0,0,2.5-dwn]) rotate([0,0,0]) RX_XM(exp); 
     }
-    translate([2,15+5.5,-4]) rotate([0,-90,180]) TX_MM213TL(exp);
+    translate([2,15+5.5,-3]) rotate([0,-90,180]) TX_MM213TL(exp);
 
     
      if(exp)
@@ -311,6 +311,7 @@ difference()
 
 }
 
+// pacement module for interface to lower cover.
 module ItfPlace()
 {
     copy_mirror([1,0,0]) translate([7.5,39.5,-height]) children();
@@ -374,13 +375,13 @@ module bottom()
     {
         union()
         {
-            translate([0,0,-height-thick]) linear_extrude(height = thick*1.7,scale = 1.0)
+            translate([0,0,-height-thick]) linear_extrude(height = thick*2.5,scale = 1.0)
             {
                 innerbottom();
             }
             
         }
-        translate([0,0,-height]) linear_extrude(height = thick,scale = 1.0)
+        translate([0,0,-height]) linear_extrude(height = thick+1,scale = 1.0)
         {
             offset(r=-2) innerbottom();
         }
@@ -401,7 +402,7 @@ module bottom()
                 translate(FCpos) translate([0.5,9,-9-thick+0.2]) cube([4,4,4],true); // lower front
                 translate(FCpos) translate([0.5,-9,-9-thick+0.2]) cube([4,4,4],true); // lower back
             }
-            translate(FCpos) cube([1.2,20.6,20.6],true);
+            translate(FCpos) translate([0.5,0,0]) cube([1.2,20.6,20.6],true);
         }
 }
 
@@ -416,5 +417,5 @@ ItfPlace() bottombolt();
 }  
 
 translate([100,0,0]) bottom();
-//STUFF(false); 
+
 
