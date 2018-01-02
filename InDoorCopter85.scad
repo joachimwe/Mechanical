@@ -52,7 +52,7 @@ rdiv =5;
                     cylinder(r=radius+thick,h=height);  // upper frame // 1=unten
                 }
                 translate([0,0,-1]) cylinder(r=radius,h=height+2);
-                translate([0,-radius,4-2.5]) rotate([90,0,0]) cylinder(d=4,h=3,center=true); // cable bore
+                translate([0,-radius,4-3]) rotate([90,0,0]) cylinder(d=3,h=3,center=true); // cable bore
             }
 
             translate([0,0,-height+cos(ang)*dlt+thick/2]) 
@@ -130,6 +130,7 @@ module STUFF(exp=false)
     union()
     {
         CAMERA(exp);
+        if(exp)
         translate([0,0,-11]) cube([13,13,10],center=true); // room to install cam
     }
     dwn = height - 14;
@@ -138,7 +139,7 @@ module STUFF(exp=false)
     {
         copy_mirror([1,0,0]) translate([15,-0.5+3,-3.5-dwn]) rotate([90,0,180-17]) ESC16x16(exp);
         translate(FCpos) rotate([0,-90,180]) REVO16x16(exp);
-        translate([-10,11,-5-dwn]) rotate([90,0,90-35]) RX_XM(exp);
+        translate([-10,11,-5-dwn]) rotate([-90,0,90-35]) RX_XM(exp);
     }
     else
     {
@@ -230,7 +231,7 @@ module body()
     
     
     
-    // floor / top
+    // top
 difference()
     {
         union()
@@ -274,7 +275,7 @@ difference()
         translate([0.5-2.5/2+0.5,9,8.5]) cube([5.5,4,4],true); // upper front
         translate([0.5,-9,8.5]) cube([4,4,4],true); // upper back
         
-        translate([-1.5-0.5,10.25-4,-8.8]) rotate ([0,0,-10]) cube([4.5,7,4],true);
+        //translate([-1.5-0.5,10.25-4,-8.8]) rotate ([0,0,-10]) cube([4.5,7,4],true);
         
         //reinforce stuff
         translate([-0.4,-11,9]) rotate([0,0,60]) cube([3,9,1]);
@@ -302,8 +303,19 @@ difference()
     }
     
     
-    //STUFF(false);    
+    //STUFF(false);
+    
+    // reinforcements for bolts from bottom cover
+    ItfPlace() cylinder(d=3.5,h=4);
+    
 
+}
+
+module ItfPlace()
+{
+    copy_mirror([1,0,0]) translate([7.5,39.5,-height]) children();
+    copy_mirror([1,0,0]) translate([36.5,1.5,-height]) children();
+    copy_mirror([1,0,0]) translate([8.25,-1.5,-height]) children();
 }
 
 module innertop()
@@ -311,15 +323,88 @@ module innertop()
      translate([0,0,1.5]) 
     difference()
     {
-        linear_extrude(height = 6.5,scale = 0.8)
+        linear_extrude(height = 6.5,scale = 0.9)
         {
         polygon([[-8,35],[8,35],[38,-2],[-38,-2]]);
         }
         copy_mirror([1,0,0]) translate([dx/2,dy/2,0]) cylinder(r=radius+trad-thick,h=20);
-         translate([0,-4,-height]) cylinder(d=12,h=30);
+        translate([0,-4,-height]) cylinder(d=12,h=30); //free batt hole
     }
     
 }
+
+
+module bottombolt()
+{
+        translate([0,0,-3-thick]) cylinder(d=4,h=3);
+        translate([0,0,-thick]) cylinder(d=2.2,h=thick);
+        translate([0,0,0]) cylinder(d=1.75,h=6);
+}
+
+module bottom_old()
+{
+     
+    difference()
+    {
+        translate([0,0,-height-thick]) linear_extrude(height = thick,scale = 1.0)
+        {
+        polygon([[-8,41],[8,41],[38,+3],[38,-3],[-38,-3],[-38,+3]]);
+        }
+        copy_mirror([1,0,0]) translate([dx/2,dy/2,-0.5-height-thick]) cylinder(r=radius+thick,h=20);
+        translate([0,-4,-height]) cylinder(d=12,h=30); //free batt hole
+        ItfPlace() bottombolt();
+    }
+    
+}
+
+module innerbottom()
+{
+    difference()
+        {
+            polygon([[-8,41],[8,41],[38,+3.5],[38,-3.5],[-38,-3.5],[-38,+3.5]]);
+            copy_mirror([1,0]) translate([dx/2,dy/2])  circle(r=radius);
+            translate([0,-4]) circle(d=12); //free batt hole
+        }
+}
+
+module bottom()
+{
+     
+    difference()
+    {
+        union()
+        {
+            translate([0,0,-height-thick]) linear_extrude(height = thick*1.7,scale = 1.0)
+            {
+                innerbottom();
+            }
+            
+        }
+        translate([0,0,-height]) linear_extrude(height = thick,scale = 1.0)
+        {
+            offset(r=-2) innerbottom();
+        }
+        ItfPlace() bottombolt();
+        body();
+        STUFF(false); 
+        
+        copy_mirror([1,0,0]) translate([18,2,-height-1.5]) cylinder(d=7,h=3);
+        copy_mirror([1,0,0]) translate([27,0,-height-1.5]) cylinder(d=4,h=3);
+        copy_mirror([1,0,0]) translate([8,7,-height-1.5]) cylinder(d=9,h=3);
+        translate([0,19,-height-1.5]) cylinder(d=10,h=3);
+        translate([0,32,-height-1.5]) cylinder(d=10,h=3);
+    }
+    
+    difference() {
+        union()
+            {
+                translate(FCpos) translate([0.5,9,-9-thick+0.2]) cube([4,4,4],true); // lower front
+                translate(FCpos) translate([0.5,-9,-9-thick+0.2]) cube([4,4,4],true); // lower back
+            }
+            translate(FCpos) cube([1.2,20.6,20.6],true);
+        }
+}
+
 
 
 
@@ -327,7 +412,9 @@ difference()
 {
 body();
 STUFF(true);   
+ItfPlace() bottombolt();
 }  
 
+translate([100,0,0]) bottom();
 //STUFF(false); 
 
