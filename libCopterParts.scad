@@ -396,8 +396,8 @@ module RUNCAM_SWIFT(ext=false)
             union()// TX
             {
                 cube([19,19,8],true); 
-                translate([8,-8,-2]) cylinder(d=5.3,h=4,$fn=12);
-                translate([-8,8,-2]) cylinder(d=5.3,h=4,$fn=12);
+                //translate([8,-8,-2]) cylinder(d=5.3,h=4,$fn=12);
+                //translate([-8,8,-2]) cylinder(d=5.3,h=4,$fn=12);
                 translate([-5,1,-1])cube([9,19,1],true); 
                 
                  translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d=5,h=43);

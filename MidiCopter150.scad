@@ -12,8 +12,8 @@ $fn=24;
 
 campos = [0,12,28];
 
-lower_angle = 30;
-upper_angle = 30;
+lower_angle = 40;
+upper_angle = 50;
 
 CoverThickness = 0.6;
 
@@ -146,7 +146,7 @@ module innerCover(rem=false)
     
     hull() 
         {
-                translate(campos) rotate([0,90,0]) cylinder(d=6,h=10+10+9,center=true); // cam support cylinder
+                translate(campos) rotate([0,90,0]) cylinder(d=6,h=10+10+7,center=true); // cam support cylinder
                 translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5-1]) cylinder(d=16,h=4,center=true); // Protector ring
                 
                  translate(campos)  rotate([(lower_angle+upper_angle)/2-10,0,0]) translate([0,-10,-0.5]) 
@@ -155,7 +155,7 @@ module innerCover(rem=false)
             cube(2);
             } // cam extension
 
-        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 10, 0]) cylinder(h=h,d=rem?8:InnerCoverPillarDia, $fn=12);
+        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 11, 0]) cylinder(h=h,d=rem?8:InnerCoverPillarDia, $fn=12);
 
 
         }
@@ -270,24 +270,30 @@ module STUFF(exp=false)
 }
 
 
+
 difference()
 {
     union()
     {
 
+if(false)
+{
+//translate([50,0,0]) 
+    STUFF(false);
+//translate([50,0,0]) innerCover(true);       
+FRAME();
 
-//translate([50,0,0]) STUFF(false);
-//FRAME();
-
+}
 //rotate([-90-(lower_angle+upper_angle)/2,0,0])
 
-translate([50,0,0]) BODY();  
+translate([50,0,0]) 
+BODY();  
 
 //color("lightblue")
 COVER();
     }
     
-        //color("blue") translate([50,0,0]) cube([100,100,100],center=true); // Velcro
+//color("blue") translate([0,-50,0]) cube([100,100,100],center=true); // half it
     
     }
 //
