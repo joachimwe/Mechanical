@@ -10,12 +10,12 @@ use <libCopterParts.scad>
 
 $fn=24;
 
-campos = [0,12,28];
+campos = [0,13,28];
 
-lower_angle = 40;
-upper_angle = 50;
+lower_angle = 30;
+upper_angle = 30;
 
-CoverThickness = 0.6;
+CoverThickness = 1.5;
 
 module copy_mirror(vec=[0,1,0])
 {
@@ -137,6 +137,13 @@ module BODY()
     }
 }
 
+module extensionbox()
+{
+    minkowski(){
+                    cube([19,16,18],center=true);
+                    cube(2);
+                } // cam extension
+}
 
 InnerCoverPillarDia = 12;
 
@@ -149,11 +156,8 @@ module innerCover(rem=false)
                 translate(campos) rotate([0,90,0]) cylinder(d=6,h=10+10+7,center=true); // cam support cylinder
                 translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5-1]) cylinder(d=16,h=4,center=true); // Protector ring
                 
-                 translate(campos)  rotate([(lower_angle+upper_angle)/2-10,0,0]) translate([0,-10,-0.5]) 
-            minkowski(){
-            cube([18,24,18],center=true);
-            cube(2);
-            } // cam extension
+                 translate(campos)  rotate([(lower_angle),0,0]) translate([0,-10+3,-0.5]) extensionbox();
+                 translate(campos)  rotate([(upper_angle),0,0]) translate([0,-10+3,-0.5]) extensionbox();
 
         copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 11, 0]) cylinder(h=h,d=rem?8:InnerCoverPillarDia, $fn=12);
 
@@ -184,7 +188,7 @@ module CoverBase()
         {
             translate ([10, 10, 0]) cylinder(h=hzyl,d=dzyl, $fn=12);
      
-            rotate([0,0,-45]) translate([0,52.6/2+2.4,0]) cylinder(h=3,d=5, $fn=12);
+            rotate([0,0,-45]) translate([0,52.6/2+2.4,0]) cylinder(h=3,d=6, $fn=12);
         }
             }
   
@@ -200,12 +204,12 @@ module COVER()
             minkowski()
             {
                 innerCover(false);
-                sphere(1);
+                sphere(r=CoverThickness);
             }
             translate([0,18,7.5]) rotate([0,90,0]) cylinder(d=5,h=32,center=true); // front stiffener
             translate([0,-15.5,7.5]) rotate([0,90,0]) cylinder(d=5,h=31,center=true); // back stiffener
             
-            translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5+2.75]) cylinder(d1=19,d2=19,h=3,center=true); // Protector ring
+            translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5+2.75]) cylinder(d1=19,d2=19,h=8,center=true); // Protector ring
         }   
         innerCover(true);
         STUFF(true); 
@@ -265,20 +269,21 @@ module STUFF(exp=false)
     
     color("grey") translate([0,0,1]) cube([60,12,2],center=true); // Velcro
     
-    cylinder(d=19,h=25,center=false);
+    if(exp)
+    {
+        cylinder(d=19,h=18,center=false);
+    }
 
 }
 
 
 
-difference()
-{
-    union()
-    {
+
+
 
 if(false)
 {
-//translate([50,0,0]) 
+    translate([50,0,0]) 
     STUFF(false);
 //translate([50,0,0]) innerCover(true);       
 FRAME();
@@ -290,10 +295,13 @@ translate([50,0,0])
 BODY();  
 
 //color("lightblue")
+difference()
+{
+
 COVER();
-    }
     
-//color("blue") translate([0,-50,0]) cube([100,100,100],center=true); // half it
+    
+//color("blue") translate([0,-40,0]) cube([100,100,100],center=true); // half it
     
     }
 //
