@@ -78,7 +78,7 @@ module BODY()
 	lb= 23; // top piece length
 	wb= 23; // top piece width
 	h=7; // top piece height offset
-	r= 3; // top piece radius
+	r= 3.5; // top piece radius
     ht= 5; // top piece thickness
 
 	difference()
@@ -159,7 +159,7 @@ module innerCover(rem=false)
                  translate(campos)  rotate([(lower_angle),0,0]) translate([0,-10+3,-0.5]) extensionbox();
                  translate(campos)  rotate([(upper_angle),0,0]) translate([0,-10+3,-0.5]) extensionbox();
 
-        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([10, 11, 0]) cylinder(h=h,d=rem?8:InnerCoverPillarDia, $fn=12);
+        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([11, 10, 0]) cylinder(h=h,d=rem?8:InnerCoverPillarDia, $fn=12);
 
 
         }
@@ -174,7 +174,7 @@ module innerCover(rem=false)
 
 module CoverBase()
 {
-    hzyl = 10;
+    hzyl = 11;
     dzyl = InnerCoverPillarDia;
     
     union() 
@@ -186,9 +186,9 @@ module CoverBase()
         copy_rotate([0,0,90]) copy_rotate([0,0,90]) copy_rotate([0,0,90]) 
         hull()
         {
-            translate ([10, 10, 0]) cylinder(h=hzyl,d=dzyl, $fn=12);
+            translate ([10, 10, 0]) cylinder(h=hzyl,d=dzyl+2, $fn=12);
      
-            rotate([0,0,-45]) translate([0,52.6/2+2.4,0]) cylinder(h=3,d=6, $fn=12);
+            rotate([0,0,-45]) translate([0,52.6/2+2.4,0]) cylinder(h=3,d=7, $fn=12);
         }
             }
   
@@ -208,13 +208,24 @@ module COVER()
             }
             translate([0,18,7.5]) rotate([0,90,0]) cylinder(d=5,h=32,center=true); // front stiffener
             translate([0,-15.5,7.5]) rotate([0,90,0]) cylinder(d=5,h=31,center=true); // back stiffener
+            copy_mirror([1,0,0])translate([-16.5,0,7.5]) rotate([90,0,0]) cylinder(d=5,h=31,center=true); // side stiffener
             
             translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5+2.75]) cylinder(d1=19,d2=19,h=8,center=true); // Protector ring
+            
+            // antenna support
+            hull(){
+        for(i=[lower_angle:5:upper_angle])
+            {
+                translate(campos)  rotate([-90-i,180,0]) translate([0,0,-11]) translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d1=12,d2=6,h=12);
+            }       
+            
+        }
         }   
         innerCover(true);
         STUFF(true); 
         translate([0,0,-2+0.001]) cube([100,100,4],true); // remove lower skin
-        translate([0,0,3])cube([19,100,6],center=true); // remove space for wiring
+        rotate([0,0,90])translate([0,0,3])cube([19,100,6],center=true); // remove space for wiring -sides
+        rotate([0,0,0])translate([0,-50,1.5])cube([8,100,3],center=true); // remove space for wiring - back
 
     }
 }
@@ -246,7 +257,7 @@ module FRAME()
 
 module STUFF(exp=false)
 {
-    translate([0,0,3.5]) rotate([0,0,0]) ESC20x20(exp);
+    translate([0,0,3.5]) rotate([0,0,-90]) ESC20x20(exp);
     translate([0,0,8.5]) OMNIBUS20x20(exp);
 
     union(){
@@ -256,7 +267,7 @@ module STUFF(exp=false)
         }       
     }
     
-    translate([-4,-8,16]) rotate([45,0,0]) BEEPER(exp);
+    translate([-4,-8,16]) rotate([0,0,0]) BEEPER(exp);
 
     translate([-2.1,-2,12.5]) rotate([180,0,90]) RX_XMPLUS(exp);
 

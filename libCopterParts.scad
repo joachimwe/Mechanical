@@ -237,6 +237,8 @@ module ESC20x20(clr=false)
 		{   
 			color("red") translate ([ i, -10-3, +1.0+0.8]) rotate([90,0,0]) cylinder(h=10,d=2.5,$fn=12);
 		}
+        copy_mirror([0,1,0]) color("red") translate ([ 11, 2.5, -1.0-0.5]) rotate([90,0,90]) cylinder(h=15,d=3.5,$fn=12);
+
     }
     
 }
@@ -363,7 +365,7 @@ module BEEPER(clr=false)
 	color("red") if(clr)
     {
         translate([0,0,-2]) cylinder(d=6,h=2);
-        translate([0,0,6]) cylinder(d=9.5,h=10);
+        translate([0,0,6]) cylinder(d=9.5,h=2);
 	}
 	else
 	{
@@ -380,27 +382,27 @@ module RUNCAM_SWIFT(ext=false)
     {
         union()
         {
-            color("grey") cylinder(d=12,h=10); // lens
-            color("orange") rotate ([0,90,0]) cylinder(d=6,h=19,center=true); // fixing block
+            color("grey") cylinder(d=12.5,h=10); // lens
+            color("orange") rotate ([0,90,0]) cylinder(d=6,h=19.3,center=true); // fixing block
             color("orange") hull()
             {
-                translate([7.5,-7.5,-5]) cylinder(d=4,h=7);
-                translate([-7.5,7.5,-5]) cylinder(d=4,h=7);
+                translate([7.5,-7.5,-5]) cylinder(d=4.5,h=7);
+                translate([-7.5,7.5,-5]) cylinder(d=4.5,h=7);
             }
             //translate([0,0,-4.5-Conn_Len/2]) cube([19,19,9+Conn_Len],true);
             color("orange") translate([0,0,-1.5]) cube([14,13.3,7],true);
-            color("darkgreen") translate([0,0,-1.9-5]) cube([19,19,3.8],true); // PCA
+            color("darkgreen") translate([0,0,-1.9-5]) cube([19.3,19.3,3.8],true); // PCA
             color("lightgrey") translate([4.4,7.9,-2-5-3.5]) cube([10.2,3.2,3.5],true); // connector
             
             translate([0,0,-11]) 
             union()// TX
             {
-                cube([19,19,8],true); 
+                cube([19.3,19.3,8],true); 
                 //translate([8,-8,-2]) cylinder(d=5.3,h=4,$fn=12);
                 //translate([-8,8,-2]) cylinder(d=5.3,h=4,$fn=12);
                 translate([-5,1,-1])cube([9,19,1],true); 
                 
-                 translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d=5,h=43);
+                translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d=5,h=43); // antenna
             }
             
         }
@@ -412,7 +414,7 @@ module RUNCAM_SWIFT(ext=false)
         translate([0,0,10]) CAMANGLE(FOV); // view angle
         rotate ([0,90,0]) cylinder(d=2.1,h=30,center=true,$fn=12); // add M2+extension in case of substraction
         //translate([0,0,-1.5]) cube([16,16,9],true); // center block
-        translate([0,0,-1.5]) cube([19,19,9],true); // center block
+        translate([0,0,-1.5]) cube([19.3,19.3,9],true); // center block
         
         translate([-10,-6.5,-8.5]) rotate ([0,90,0]) cylinder(d=2.5,h=30,center=true); // channel pushbutton
         //translate([0,0,-2-5-3.75]) cube([19,19,15],true); // TX extended for un/install
