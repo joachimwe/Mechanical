@@ -199,7 +199,7 @@ module BattHld()
     
 }
 
-BattPos = [0,-19,-6.8+0.25+3];
+BattPos = [0,-19,-height+17.5/2+thick]; // BattSize z !
 
 module body()
 {
@@ -210,7 +210,7 @@ module body()
        translate(BattPos) Battery();
         
     }
-    // side support
+    // outer side connection
     copy_mirror([1,0,0]) translate([dx/1.8,0,-height/2]) 
     union(){
         cube([thick,trad*1.8+2,height],center=true);
@@ -223,7 +223,7 @@ module body()
     translate(BattPos)BattHld();
     
     // batt side support
-    copy_mirror([1,0,0]) translate([-15.7-2,-1-2,-height/2+2.05]) rotate([0,0,0]) difference() 
+    copy_mirror([1,0,0]) translate([-15.7-2,-1-2,-height/2+2.0]) rotate([0,0,0]) difference() 
     {
         cube([22,thick,height+4],true);
         translate([0,0,1.5]) rotate([90,0,0]) cylinder(d=11,h=thick+2,center=true);
@@ -252,7 +252,7 @@ difference()
         translate([0,19,-height]) cylinder(h=30,d=12); // front center
         
         translate([-11,6,-height]) cylinder(h=30,d=8); 
-        hull()
+        hull() //connector opening for battery
         {
             translate([11,6,-height]) cylinder(h=30,d=8); 
             translate([3,6,-height]) cylinder(h=30,d=5.5); 
@@ -414,8 +414,9 @@ difference()
 body();
 STUFF(true);   
 ItfPlace() bottombolt();
+color("red")translate([0,0,-height-5+0.02]) cube([150,150,10],center=true); // test limitation for a even bottom
 }  
 
-translate([100,0,0]) bottom();
+translate([100,0,10]) bottom(); // elevate Z to make cleat that the stl needs to be split in Slic3r
 
 
