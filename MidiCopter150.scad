@@ -10,10 +10,12 @@ use <libCopterParts.scad>
 
 $fn=24;
 
+StandOffDia = 5;
+
 campos = [0,13,28];
 
-lower_angle = 30;
-upper_angle = 30;
+lower_angle = 40;
+upper_angle = 50;
 
 CoverThickness = 1.5;
 
@@ -40,7 +42,7 @@ module Standoffs (sq,h){
 	{
 		difference()
 		   {     
-			translate (i) cylinder(h,d=7, $fn=30);
+			translate (i) cylinder(h,d=StandOffDia, $fn=30);
 			translate (i) cylinder(h,d=2.1, $fn=30);
 		   }
 	}   
@@ -60,7 +62,7 @@ module LowerStandoff(){
     {
         difference()
            {     
-            translate (i) cylinder(h,d=7, $fn=30);
+            translate (i) cylinder(h,d=StandOffDia, $fn=30);
             translate (i) cylinder(h,d=2.1, $fn=30);
            }
     }   
@@ -95,7 +97,7 @@ module BODY()
                          [-w,  d, 8.5],
                          [-w,  -d, 8.5] ])
                 {
-                    translate (i) cylinder(h=ht,r=r, $fn=30);
+                    translate (i) cylinder(h=ht,d=StandOffDia, $fn=30);
                 }  
                 translate(campos) rotate([0,90,0]) cylinder(d=6,h=24,center=true);
                
@@ -216,7 +218,7 @@ module COVER()
             hull(){
         for(i=[lower_angle:5:upper_angle])
             {
-                translate(campos)  rotate([-90-i,180,0]) translate([0,0,-11]) translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d1=12,d2=6,h=12);
+                translate(campos)  rotate([-90-i,180,0]) translate([0,0,-11]) translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d1=22,d2=6,h=11);
             }       
             
         }
@@ -263,7 +265,28 @@ module STUFF(exp=false)
     union(){
         for(i=[lower_angle:5:upper_angle])
             {
-                translate(campos)  rotate([-90-i,180,0]) RUNCAM_SWIFT(exp);
+                translate(campos)  rotate([-90-i,180,0]) 
+                union()
+                {
+                    RUNCAM_SWIFT(exp);
+                    if(exp==true && i ==lower_angle)
+                    {
+                        translate([0,15,-29]) cube([20,20,30],true); // cut away back
+                        // antenna guide zip
+                        translate([-3.5,12+0.5,-13.5+1.9]) 
+                        rotate([90,0,0])
+                        
+                            difference() {
+                                ziprad= 3;
+                                 cylinder(d=ziprad*2+1,h=2,center=true); // Zip = 2x1mm
+                                 cylinder(d=ziprad*2-1,h=2,center=true);
+                            }
+                            
+                        
+                        translate([-3.5,18,-13.5]) rotate([90,0,0]) cylinder(d1=5,d2=1,h=5); // antenna exit cone
+                    }
+                }
+                
         }       
     }
     
