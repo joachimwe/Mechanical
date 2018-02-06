@@ -55,7 +55,7 @@ rdiv =5;
                 translate([0,-radius,4-3]) rotate([90,0,0]) cylinder(d=3,h=3,center=true); // cable bore
             }
 
-            translate([0,0,-height+cos(ang)*dlt+thick/2]) 
+            translate([0,0,-height+cos(ang)*dlt+thick/2-0.3]) 
             for(i=[0:360/rdiv:359])
             {
                 rotate([0,0,i+zer]) translate([rot>0?4:-4,0,0]) rotate([90,90-rot,0]) Fin();
@@ -258,8 +258,8 @@ difference()
             translate([3,6,-height]) cylinder(h=30,d=5.5); 
         }
         
-        translate([2,31,-height]) cylinder(h=31-4,d=5); // TX antenna hole
-        translate([2,31,-height+31-10]) cylinder(h=3,d1=5,d2=8); // TX antenna hole
+        translate([2,31,-height]) cylinder(h=31-4,d=4); // TX antenna hole
+        translate([2,31,-height+31-10]) cylinder(h=3,d1=4,d2=8); // TX antenna hole
         
         translate(BattPos) Battery();
             
@@ -417,6 +417,6 @@ ItfPlace() bottombolt();
 color("red")translate([0,0,-height-5+0.02]) cube([150,150,10],center=true); // test limitation for a even bottom
 }  
 
-translate([100,0,10]) bottom(); // elevate Z to make cleat that the stl needs to be split in Slic3r
+ translate([100,0,10]) rotate([0,0,90]) bottom(); // elevate Z to make cleat that the stl needs to be split in Slic3r
 
 
