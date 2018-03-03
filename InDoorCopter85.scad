@@ -2,7 +2,7 @@
 Indoor Copter
 1103 motors
 
-(c) 2017 Fabian Huslik
+(c) 2018 Fabian Huslik
 
 https://github.com/fabianhu/
 */ 
@@ -11,11 +11,11 @@ $fn = 60;
 radius = 2 * (25.4/2)+0.5; // propeller radius
 echo("Prop radius: ",radius);
 thick = 0.8; // rest body thickness
-fthick = 0.7; // fin thickness
+fthick = 0.8; // fin thickness
 trad = 3.0; // intake aerodynamic radius
 height = 13; //height of tunnel
 
-dx=radius*2+2*thick+13;
+dx=radius*2+2*thick+13+0.4;
 dy=radius*2+2*trad-2*thick+0.3+2;
 
 
@@ -41,17 +41,11 @@ rdiv =5;
     {
         union()
         {
-            torus();
-            
             // outer cylinder
             translate([0,0,-height])
             difference()
             {
-                union()
-                {
-                    cylinder(r=radius+thick,h=height);  // upper frame // 1=unten
-                }
-                translate([0,0,-1]) cylinder(r=radius,h=height+2);
+                translate([0,0,height])torus();
                 translate([0,-radius,4-3]) rotate([90,0,0]) cylinder(d=3,h=3,center=true); // cable bore
             }
 
@@ -61,35 +55,11 @@ rdiv =5;
                 rotate([0,0,i+zer]) translate([rot>0?4:-4,0,0]) rotate([90,90-rot,0]) Fin();
             }
             translate([0,0,-height]) cylinder(d=15+thick*2,h=5); // motor carrier (bell diameter from motor)
-
-            for(i=[0:360/5:360])
-            {
-                 rotate([0,0,i-10]) translate([radius+thick,0,-height])  
-                 difference()
-                {
-                 cylinder(r=thick,h=15);
-                 translate([-1,0,14.5]) rotate([0,30,0]) cube(2,center=true);
-                 }
-            }
-
-            
             
         }
         translate([0,0,-height+thick]) rotate([0,0,zer-90]) motor1103(true);
         
-        /*for(i=[0:360/rdiv:180])
-        {
-            rotate([0,0,i-45]) translate([radius,0,-height-10]) rotate([0,90,0]) cylinder(d=32,h=8,center=true);
-        }*/
-        
-        // motor holder cutout
-        /*for(i=[0:360/rdiv:359])
-        {
-            rotate([0,0,i+360/rdiv/2+5]) translate([6,0,-height+6]) rotate([0,90,0]) cylinder(d=7.5,h=5,center=true);
-        }*/
-        
     }
-    //translate([0,0,-height+thick*2]) rotate([0,0,zer-90]) motor1103(true);
 }
 
 
@@ -103,22 +73,14 @@ module Fin(){
 
 module torus() // might not work for every thickness and trad.
 {
+    topdia = thick+0.7+0.5;
+    
     rotate_extrude(convexity = 5 )
     translate([radius+trad, 0, 0])
-    union() // roundness at top
+    hull() // roundness at top
     {
-        //translate([-thick*1.8,trad-thick/2-0.15]) circle(d=thick+0.3);
-        translate([-trad/2+0.2,trad-thick/2-0.40]) circle(d=thick+0.7);
-    difference()
-    {
+        translate([-trad,-height])square([thick,height]);
         circle(r = trad);
-        //translate([-0.78,0]) circle(r = trad-thick-0.78);
-        translate([0,-0.5]) circle(r = trad-thick+0.06);
-        translate([-0.5-0.5,-0.5]) square([5,5]);
-        
-        translate([-5,-10]) square([10,10]); // cut lower bound 
-        translate([-1.45,2]) square([1,1]); // cut the upper "Fitzel"
-    }
     }
 }
 
@@ -137,9 +99,9 @@ module STUFF(exp=false)
         
     if(true) // star - stack config
     {
-        copy_mirror([1,0,0]) translate([15,-0.5+3,-3.5-dwn]) rotate([90,0,180-17]) ESC16x16(exp);
+        copy_mirror([1,0,0]) translate([15+1,-0.5+3+0.5,-3.5-dwn]) rotate([90,0,180-15]) ESC15x15(exp);
         translate(FCpos) rotate([0,-90,180]) REVO16x16(exp);
-        translate([-10,11,-5-dwn]) rotate([-90,0,90-35]) RX_XM(exp);
+        translate([-10,10,-5-dwn]) rotate([-90,0,90-35]) RX_XM(exp);
     }
     else
     {
@@ -157,13 +119,13 @@ module STUFF(exp=false)
      } 
 }
 
-BattSize=[13,42,17.5];
+BattSize=[13,42+8,17.5];
 
 module Battery()
 {
     BattRad=1.5;
     minkowski(){
-    cube(BattSize-[BattRad,BattRad,BattRad],center=true);
+    translate([0,-4,0])cube(BattSize-[BattRad,BattRad,BattRad],center=true);
     sphere(BattRad/2);
         }
     
@@ -177,15 +139,11 @@ module BattHld()
     {
         minkowski(){
             Battery();
-            sphere(thick,center=true);
+            sphere(thick+0.2,center=true);
         }
         Battery();
-        translate([0,-21,-0.5]) cube([15,2,21],center=true); // minus end
+        translate([0,-21-5,-0.5]) cube([15,12,21],center=true); // minus end
         
-        /*translate([0,15,0]) rotate([0,0,45]) cylinder(d=14,h=20,center=true,$fn=4);        
-        translate([0,1,0]) rotate([0,0,45]) cylinder(d=14,h=20,center=true,$fn=4);
-        translate([0,-13,0]) rotate([0,0,45]) cylinder(d=14,h=20,center=true,$fn=4);
-        */
         translate([0,15,0]) cylinder(d=10,h=20,center=true);        
         translate([0,1,0])cylinder(d=10,h=20,center=true);
         translate([0,-13,0])cylinder(d=10,h=20,center=true);
@@ -193,13 +151,12 @@ module BattHld()
         
         translate([0,15,0]) rotate ([90,0,0]) cylinder(d=11,h=20,center=true);
         
-        //translate([0,-12,0])rotate ([90,0,90])cylinder(d=15,h=20,center=true);
         translate([0,12,0])rotate ([90,0,90])cylinder(d=13,h=20,center=true);
     }
     
 }
 
-BattPos = [0,-19,-height+17.5/2+thick]; // BattSize z !
+BattPos = [0,-19,-height+17.5/2+thick+0.2]; // BattSize z !
 
 module body()
 {
@@ -274,9 +231,7 @@ difference()
     {
         translate([0.5-2.5/2+0.5,9,8.5]) cube([5.5,4,4],true); // upper front
         translate([0.5,-9,8.5]) cube([4,4,4],true); // upper back
-        
-        //translate([-1.5-0.5,10.25-4,-8.8]) rotate ([0,0,-10]) cube([4.5,7,4],true);
-        
+  
         //reinforce stuff
         translate([-0.4,-11,9]) rotate([0,0,60]) cube([3,9,1]);
         translate([1,-8.5,9]) rotate([0,0,-65]) cube([3,12.5,1]);
@@ -301,9 +256,6 @@ difference()
        CAMERA(true);
        
     }
-    
-    
-    //STUFF(false);
     
     // reinforcements for bolts from bottom cover
     ItfPlace() cylinder(d=3.5,h=4);
@@ -417,6 +369,6 @@ ItfPlace() bottombolt();
 color("red")translate([0,0,-height-5+0.02]) cube([150,150,10],center=true); // test limitation for a even bottom
 }  
 
- translate([100,0,10]) rotate([0,0,90]) bottom(); // elevate Z to make cleat that the stl needs to be split in Slic3r
+ translate([100,0,10]) rotate([0,0,90]) bottom(); // elevate Z to make clear that the stl needs to be split in Slic3r
 
-
+//STUFF(true);   

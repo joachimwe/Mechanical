@@ -10,7 +10,7 @@ https://github.com/fabianhu/
 
 translate([-110,0,0]) TX03();
 translate([-80,0,0]) REVO16x16(); 
-translate([-40,0,0]) ESC16x16();
+translate([-40,0,0]) ESC15x15();
 translate([-5,0,0]) ESC20x20();
 translate([30,0,0]) OMNIBUS20x20();
 translate([65,0,0]) CAMERA();
@@ -26,7 +26,7 @@ translate([300,0,0]) motor1105();
 
 translate([-110,40,0]) TX03(true);
 translate([-80,40,0]) REVO16x16(true); 
-translate([-40,40,0]) ESC16x16(true);
+translate([-40,40,0]) ESC15x15(true);
 translate([-5,40,0]) ESC20x20(true);
 translate([30,40,0]) OMNIBUS20x20(true);
 translate([65,40,0]) CAMERA(true);
@@ -34,7 +34,7 @@ translate([85,40,0]) RX_XM(true);
 translate([100,40,0]) RX_XMPLUS(true);
 translate([120,40,0]) TX_MM213TL(true);
 translate([140,40,0]) BEEPER(true);
-translate([160,40,0]) !RUNCAM_SWIFT(true);
+translate([160,40,0]) RUNCAM_SWIFT(true);
 translate([200,40,0]) motor1103(true);
 translate([260,40,0]) motor1807(true);
 translate([300,40,0]) motor1105(true);
@@ -75,7 +75,7 @@ module TX03(clr=false)
   }
 }
 
-module ESC16x16(clr=false) 
+module ESC15x15(clr=false) 
 {
     l = 15;
     PCB_x = 22.8;	
@@ -122,7 +122,8 @@ module ESC16x16(clr=false)
         for(i = [ [  l/2,   l/2,  0], [ l/2, -l/2, 0], [-l/2,  l/2, 0], [-l/2,  -l/2, 0] ])
         {   
 			//color("red") translate (i) cylinder(h=1.6,d=4);
-		} 
+		}
+        color("red") translate([0,0,0.5]) cube([30,18,4.6],true); // clear space around
     }
 
 }
@@ -165,7 +166,7 @@ module REVO16x16(clr=false)
     
     if(clr)
     {
-        color("red") translate([14.0,0,(2.7/2)+h]) cube([6,7.8,2.9],true); // USB connector
+        color("red") translate([14.0,0,(2.7/2)+h]) cube([6,8,2.9],true); // USB connector
         color("red") translate([-9,0,0.75+h]) cube([3,13,2],true); // upper connector space 
         color("red") translate([0,-9,0.75+h]) cube([13,3,2],true); // connector space
        // color("red") translate([0,13,(2.7/2)+h]) cube([8.5,4,3.5],true); // ESC conn 
@@ -232,13 +233,17 @@ module ESC20x20(clr=false)
     // cables
     if(clr)
     {
-    copy_mirror([0,1,0]) for(i = [-3.5*2.5:3.5:10] 
+    copy_mirror([0,1,0]) 
+        color("red") hull(){
+        for(i = [-3.5*2.5:3.5:10] 
 		        )
 		{   
-			color("red") translate ([ i, -10-3, +1.0+0.8]) rotate([90,0,0]) cylinder(h=10,d=2.5,$fn=12);
+			 translate ([ i, -8, +1.0+0.8]) rotate([90,0,0]) cylinder(h=15,d=2.5,$fn=12);
 		}
-        copy_mirror([0,1,0]) color("red") translate ([ 11, 2.5, -1.0-0.5]) rotate([90,0,90]) cylinder(h=15,d=3.5,$fn=12);
-
+        }
+         color("red") hull(){
+        copy_mirror([0,1,0]) translate ([ 11, 2.5, -1.0-0.5]) rotate([90,0,90]) cylinder(h=15,d=3.5,$fn=12);
+         }
     }
     
 }
@@ -340,7 +345,7 @@ module RX_XM(clr=false)
     color("grey") translate([0,-5,-1]) rotate([90,0,0]) cylinder(h=15,d=1.5);
 	color("red") if(clr)
     {
-			
+			color("red") cube([12,18,3.8],true);
 	}
 }
 
