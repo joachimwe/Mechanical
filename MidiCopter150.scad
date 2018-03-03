@@ -10,12 +10,12 @@ use <libCopterParts.scad>
 
 $fn=24;
 
-StandOffDia = 5;
+StandOffDia = 4.5;
 
-campos = [0,13,28];
+campos = [0,13,29];
 
-lower_angle = 40;
-upper_angle = 50;
+lower_angle = 30;
+upper_angle = 45;
 
 CoverThickness = 1.5;
 
@@ -142,26 +142,26 @@ module BODY()
 module extensionbox()
 {
     minkowski(){
-                    cube([19,16,18],center=true);
-                    cube(2);
+                    cube([19,16,19],center=true);
+                    cube(4,center=true);
                 } // cam extension
 }
 
-InnerCoverPillarDia = 12;
+InnerCoverPillarDia = 14;
 
 module innerCover(rem=false)
 {
-    h=10;
+    h=16;
     
     hull() 
         {
                 translate(campos) rotate([0,90,0]) cylinder(d=6,h=10+10+7,center=true); // cam support cylinder
-                translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5-1]) cylinder(d=16,h=4,center=true); // Protector ring
+                translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5+0.6]) cylinder(d=16,h=4,center=true); // Protector ring
                 
-                 translate(campos)  rotate([(lower_angle),0,0]) translate([0,-10+3,-0.5]) extensionbox();
-                 translate(campos)  rotate([(upper_angle),0,0]) translate([0,-10+3,-0.5]) extensionbox();
+                 translate(campos)  rotate([(lower_angle),0,0]) translate([0,-10+3,+0.5]) extensionbox();
+                 translate(campos)  rotate([(upper_angle),0,0]) translate([0,-10+3,+0.5]) extensionbox();
 
-        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([11, 10, 0]) cylinder(h=h,d=rem?8:InnerCoverPillarDia, $fn=12);
+        copy_mirror([0,1,0]) copy_mirror([1,0,0]) translate ([11, 10, 0]) cylinder(h=h,d=rem?InnerCoverPillarDia:InnerCoverPillarDia+3, $fn=24);
 
 
         }
@@ -169,7 +169,9 @@ module innerCover(rem=false)
         {
                rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,0]) cylinder(h=6,d=2.6, $fn=12);  
                 rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,3.0]) cylinder(h=6,d=5.5, $fn=6);  
-            rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,4.0]) cylinder(h=6,d1=5.5,d2=16, $fn=30);
+            rotate([0,0,45]) copy_rotate([0,0,90]) copy_mirror([0,1,0]) translate([0,52.6/2+2.4,4.0]) cylinder(h=7,d1=5.5,d2=9, $fn=30);
+            
+           translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5+2]) cylinder(d=10,h=4,center=true); // Protector ring
             
         }
 }
@@ -206,7 +208,7 @@ module COVER()
             minkowski()
             {
                 innerCover(false);
-                sphere(r=CoverThickness);
+                sphere(d=CoverThickness);
             }
             translate([0,18,7.5]) rotate([0,90,0]) cylinder(d=5,h=32,center=true); // front stiffener
             translate([0,-15.5,7.5]) rotate([0,90,0]) cylinder(d=5,h=31,center=true); // back stiffener
@@ -273,17 +275,17 @@ module STUFF(exp=false)
                     {
                         translate([0,15,-29]) cube([20,20,30],true); // cut away back
                         // antenna guide zip
-                        translate([-3.5,12+0.5,-13.5+1.9]) 
+                        translate([-3.5,12+0.5+2,-13.5+1.9]) 
                         rotate([90,0,0])
                         
                             difference() {
-                                ziprad= 3;
-                                 cylinder(d=ziprad*2+1,h=2,center=true); // Zip = 2x1mm
+                                ziprad= 3.5;
+                                 cylinder(d=ziprad*2+1.5,h=2,center=true); // Zip = 2x1mm
                                  cylinder(d=ziprad*2-1,h=2,center=true);
                             }
                             
                         
-                        translate([-3.5,18,-13.5]) rotate([90,0,0]) cylinder(d1=5,d2=1,h=5); // antenna exit cone
+                        translate([-3.5,18,-13.5]) rotate([90,0,0]) cylinder(d1=4,d2=1,h=5); // antenna exit cone
                     }
                 }
                 
@@ -296,7 +298,7 @@ module STUFF(exp=false)
 
     for(i=[45:90:360])
     {
-          //rotate([0,0,i])  translate([75,0,0]) motor1807();
+          rotate([0,0,i])  translate([75,0,0]) motor1807();
     }
 
   
@@ -317,10 +319,9 @@ module STUFF(exp=false)
 
 if(false)
 {
-    translate([50,0,0]) 
-    STUFF(false);
-//translate([50,0,0]) innerCover(true);       
-FRAME();
+    translate([0,0,0]) STUFF(false);
+    //translate([0,0,0]) innerCover(true);       
+    //FRAME();
 
 }
 //rotate([-90-(lower_angle+upper_angle)/2,0,0])
@@ -335,7 +336,7 @@ difference()
 COVER();
     
     
-//color("blue") translate([0,-40,0]) cube([100,100,100],center=true); // half it
+//color("blue") translate([-50,0,0]) cube([100,100,100],center=true); // half it
     
     }
 //

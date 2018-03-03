@@ -34,7 +34,7 @@ translate([85,40,0]) RX_XM(true);
 translate([100,40,0]) RX_XMPLUS(true);
 translate([120,40,0]) TX_MM213TL(true);
 translate([140,40,0]) BEEPER(true);
-translate([160,40,0]) RUNCAM_SWIFT(true);
+translate([160,40,0]) !RUNCAM_SWIFT(true);
 translate([200,40,0]) motor1103(true);
 translate([260,40,0]) motor1807(true);
 translate([300,40,0]) motor1105(true);
@@ -291,22 +291,22 @@ module OMNIBUS20x20(clr=false)
 module CAMERA(clr=false) 
 {
 	h_lens=6.7;
-	color("grey") cylinder(d=10,h=h_lens); // lens
-	color("grey") translate([0,0,-3/2]) cube([11.7,11.7,3],true); // upper block
+	color("grey") cylinder(d=10+0.5,h=h_lens); // lens
+	color("grey") translate([0,0,-3/2]) cube([12,12,3],true); // upper block
 
 	color("grey") translate([0,0,-1.3/2-3]) cube([12.5,12.5,1.3],true); // PCB
 
 
 	color("grey") hull()
     {
-		translate([0,0,-4]) cube([11.7,11.7,3],true);
-		translate([0,0,-4]) cube([8,8,6],true);
+		translate([0,0,-4]) cube([12.5,12.5,3],true);
+		translate([0,0,-4]) cube([8,8,7],true);
 	}
 	color("grey") translate([-4.5,2.0,-7.5])  rotate([-60,0,0]) cylinder(d=4,h=2.5); // mic
 
 	color("red") if(clr)
     {
-        translate([0,0,h_lens]) CAMANGLE(150); // view angle
+        translate([0,0,h_lens]) CAMANGLE(130); // view angle
         //hull() {
         color("grey") cylinder(d=11,h=h_lens); // lens
         //translate([0,-10,0]) color("grey") cylinder(d=10,h=h_lens); // lens ext}
@@ -376,7 +376,7 @@ module BEEPER(clr=false)
 
 module RUNCAM_SWIFT(ext=false) 
 {
-    FOV=160; // 2.1mm = 160° angle
+    FOV=150; // 2.1mm = 160° angle
     
     difference()
     {
@@ -397,17 +397,18 @@ module RUNCAM_SWIFT(ext=false)
             translate([0,0,-11]) 
             union()// TX
             {
-                cube([19.3,19.3,8],true); 
+                cube([19.5,19.5,8],true); 
                 //translate([8,-8,-2]) cylinder(d=5.3,h=4,$fn=12);
                 //translate([-8,8,-2]) cylinder(d=5.3,h=4,$fn=12);
-                translate([-5,1,-1])cube([9,19,1],true); 
+                translate([-5,1,-1])cube([9,19,1],true); // upper PC extension
                 
-                translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d=1.8,h=43); // antenna
-                translate([-3.5,6,-2.5]) rotate([-90,0,0]) translate([0,0,20])cylinder(d=5,h=12); // antenna
+                color("lightgrey")translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d=1.8,h=43); // antenna
+                color("lightgrey")translate([-3.5,6,-2.5]) rotate([-90,0,0]) translate([0,0,20])cylinder(d=5,h=12); // antenna
             }
             
         }
         rotate ([0,90,0]) cylinder(d=2,h=20,center=true); // drill M2
+        translate([0,-17,-20]) rotate([45,0,0]) cube([20,20,20],true); // connector
     }
     color("red")
     if(ext)
@@ -420,7 +421,6 @@ module RUNCAM_SWIFT(ext=false)
         translate([-10,-6.5,-8.5]) rotate ([0,90,0]) cylinder(d=2.5,h=30,center=true); // channel pushbutton
         //translate([0,0,-2-5-3.75]) cube([19,19,15],true); // TX extended for un/install
     }
-    
 
 }
 
