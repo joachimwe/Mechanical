@@ -17,7 +17,7 @@ campos = [0,13,29];
 lower_angle = 30;
 upper_angle = 45;
 
-CoverThickness = 1.5;
+CoverThickness = 1.2;
 
 module copy_mirror(vec=[0,1,0])
 {
@@ -33,46 +33,102 @@ module copy_rotate(vec=[0,90,0])
 
 module Standoffs (sq,h){
 
-	l = sq/2;
-	for(i = [ 
-	        // [  l,   l,  0],
-	         [ l, -l, 0],
-	        // [-l,  l, 0],
-	         [-l,  -l, 0] ])
-	{
-		difference()
-		   {     
-			translate (i) cylinder(h,d=StandOffDia, $fn=30);
-			translate (i) cylinder(h,d=2.1, $fn=30);
-		   }
-	}   
+//	l = sq/2;
+//	for(i = [ 
+//	        // [  l,   l,  0],
+//	         [ l, -l, 0],
+//	        // [-l,  l, 0],
+//	         [-l,  -l, 0] ])
+//	{
+//		difference()
+//		   {     
+//			translate (i) cylinder(h,d=StandOffDia, $fn=30);
+//			translate (i) cylinder(h,d=2.1, $fn=30);
+//		   }
+//	}   
 
 }
 
 
 
 module LowerStandoff(){
-    h=3.5;
- 
-    for(i = [ 
-             [  10,   10,  0],
-             [ 10, -10, 0],
-             [-10,  10, 0],
-             [-10,  -10, 0] ])
-    {
-        difference()
-           {     
-            translate (i) cylinder(h,d=StandOffDia, $fn=30);
-            translate (i) cylinder(h,d=2.1, $fn=30);
-           }
-    }   
-    
-    
-    dh=5;
+//    h=3.5;
+// 
+//    for(i = [ 
+//             [  10,   10,  0],
+//             [ 10, -10, 0],
+//             [-10,  10, 0],
+//             [-10,  -10, 0] ])
+//    {
+//        difference()
+//           {     
+//            translate (i) cylinder(h,d=StandOffDia, $fn=30);
+//            translate (i) cylinder(h,d=2.1, $fn=30);
+//           }
+//    }   
+//    
+//    
+//    dh=5;
     // translate ([15.75,0,dh/2]) cube([3.5,27,dh],center=true);
     // translate ([-15.75,0,dh/2]) cube([3.5,27,dh],center=true);
 
 }
+
+module Standoffs2()
+{
+    stdia=3.5;
+    sth1=3.5;
+    sth2=5;
+    translate([-20,30,0])
+    for(i=[0:10:40])
+    {
+        difference()
+        {
+            translate([i,0,0]) cylinder(d=stdia,h=sth1);
+            translate([i,0,0]) cylinder(d=2.1,h=sth1+0.5);
+        }
+        difference()
+        {
+            translate([i,10,0]) cylinder(d=stdia,h=sth2);
+            translate([i,10,0]) cylinder(d=2.1,h=sth2+0.5);
+        }
+    }
+}
+Standoffs2();
+
+module Antenna()
+{
+ rad=2; 
+    translate(campos)
+    rotate([(lower_angle+upper_angle)/2,0,0])
+    translate([0,-17,14])
+    
+   
+    minkowski()
+    {
+        union()
+        {
+            cylinder(d1=30-rad,d2=23.5-rad,h=11.8-rad,$fn=16);
+            translate([0,0,-10])
+            cylinder(d=30-rad,h=10,$fn=16);
+        }
+        sphere(d=rad);
+    }
+}
+
+module AntennaHull()
+{
+    difference()
+    {
+        minkowski()
+        {
+            Antenna();
+            sphere(d=CoverThickness);
+        }
+        Antenna();
+    }
+}
+
 
 
 module BODY() 
@@ -217,13 +273,14 @@ module COVER()
             translate(campos)  rotate([-90+(lower_angle+upper_angle)/2,0,0]) translate([0,0,7.5+2.75]) cylinder(d1=19,d2=19,h=8,center=true); // Protector ring
             
             // antenna support
-            hull(){
-        for(i=[lower_angle:5:upper_angle])
-            {
-                translate(campos)  rotate([-90-i,180,0]) translate([0,0,-11]) translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d1=22,d2=6,h=11);
-            }       
+//            #hull(){
+//        for(i=[lower_angle:5:upper_angle])
+//            {
+//                translate(campos)  rotate([-90-i,180,0]) translate([0,0,-11]) translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d1=22,d2=6,h=11);
+//            }       
+            AntennaHull();
             
-        }
+        //}
         }   
         innerCover(true);
         STUFF(true); 
@@ -265,7 +322,7 @@ module STUFF(exp=false)
     translate([0,0,8.5]) OMNIBUS20x20(exp);
 
     union(){
-        for(i=[lower_angle:5:upper_angle])
+        for(i=[lower_angle:7.5:upper_angle])
             {
                 translate(campos)  rotate([-90-i,180,0]) 
                 union()
@@ -273,19 +330,12 @@ module STUFF(exp=false)
                     RUNCAM_SWIFT(exp);
                     if(exp==true && i ==lower_angle)
                     {
-                        translate([0,15,-29]) cube([20,20,30],true); // cut away back
-                        // antenna guide zip
-                        translate([-3.5,12+0.5+2,-13.5+1.9]) 
-                        rotate([90,0,0])
+                       translate([0,15-6,-32]) cylinder(d=24,h=15,center=true); // cut away back
+//                        // antenna guide zip
+//                        translate([-3.5,12+0.5+2,-13.5+1.9]) 
+//                        rotate([90,0,0])
+//                        
                         
-                            difference() {
-                                ziprad= 3.5;
-                                 cylinder(d=ziprad*2+1.5,h=2,center=true); // Zip = 2x1mm
-                                 cylinder(d=ziprad*2-1,h=2,center=true);
-                            }
-                            
-                        
-                        translate([-3.5,18,-13.5]) rotate([90,0,0]) cylinder(d1=4,d2=1,h=5); // antenna exit cone
                     }
                 }
                 
@@ -308,6 +358,7 @@ module STUFF(exp=false)
     if(exp)
     {
         cylinder(d=19,h=18,center=false);
+        Antenna();
     }
 
 }

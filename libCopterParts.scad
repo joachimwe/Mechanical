@@ -407,8 +407,8 @@ module RUNCAM_SWIFT(ext=false)
                 //translate([-8,8,-2]) cylinder(d=5.3,h=4,$fn=12);
                 translate([-5,1,-1])cube([9,19,1],true); // upper PC extension
                 
-                color("lightgrey")translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d=1.8,h=43); // antenna
-                color("lightgrey")translate([-3.5,6,-2.5]) rotate([-90,0,0]) translate([0,0,20])cylinder(d=5,h=12); // antenna
+//                color("lightgrey")translate([-3.5,6,-2.5]) rotate([-90,0,0]) cylinder(d=1.8,h=43); // antenna
+//                color("lightgrey")translate([-3.5,6,-2.5]) rotate([-90,0,0]) translate([0,0,20])cylinder(d=5,h=12); // antenna
             }
             
         }
